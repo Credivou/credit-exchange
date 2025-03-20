@@ -61,9 +61,7 @@ const Contact = () => {
               Get In Touch
             </span>
             <h1 className="text-4xl md:text-5xl font-bold mb-6">Contact Us</h1>
-            <p className="text-lg text-gray-600 mb-8">
-              Have questions or feedback about CreditExchange? We'd love to hear from you.
-            </p>
+            <p className="text-lg text-gray-600 mb-8">Have questions or feedback about Credivou? We'd love to hear from you.</p>
           </div>
         </div>
       </section>
@@ -184,7 +182,7 @@ const Contact = () => {
                       </div>
                       <div>
                         <h3 className="text-lg font-semibold mb-1">Email</h3>
-                        <p className="text-gray-600">support@creditexchange.com</p>
+                        <p className="text-gray-600">help@credivou.in</p>
                         <p className="text-gray-600">We respond within 24 hours</p>
                       </div>
                     </div>
@@ -198,8 +196,9 @@ const Contact = () => {
                       </div>
                       <div>
                         <h3 className="text-lg font-semibold mb-1">Address</h3>
-                        <p className="text-gray-600">123 Financial Avenue</p>
-                        <p className="text-gray-600">New York, NY 10001</p>
+                        <p className="text-gray-600">New Delhi, India</p>
+                        <p className="text-gray-600">
+                      </p>
                       </div>
                     </div>
                   </div>
@@ -211,7 +210,7 @@ const Contact = () => {
                   
                   <div className="space-y-6">
                     <div>
-                      <h3 className="text-lg font-semibold mb-2">Is CreditExchange secure?</h3>
+                      <h3 className="text-lg font-semibold mb-2">Is Credivou secure?</h3>
                       <p className="text-gray-600">
                         Yes, we implement industry-standard security measures to protect all personal and financial information shared on our platform.
                       </p>
@@ -219,16 +218,12 @@ const Contact = () => {
                     
                     <div>
                       <h3 className="text-lg font-semibold mb-2">How do I get paid for my credit card offer?</h3>
-                      <p className="text-gray-600">
-                        We offer multiple secure payment methods including direct deposit, PayPal, and Venmo for sellers to receive their earnings.
-                      </p>
+                      <p className="text-gray-600">We offer multiple secure payment methods including Net Banking, UPI and Credit/Debit Card facilities for sellers to receive their earnings.</p>
                     </div>
                     
                     <div>
                       <h3 className="text-lg font-semibold mb-2">What if I have an issue with a transaction?</h3>
-                      <p className="text-gray-600">
-                        Our customer support team is available to help resolve any issues. Contact us through this form or at support@creditexchange.com.
-                      </p>
+                      <p className="text-gray-600">Our customer support team is available to help resolve any issues. Contact us through this form or at help@credivou.in</p>
                     </div>
                   </div>
                   

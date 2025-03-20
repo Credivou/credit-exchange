@@ -1,52 +1,60 @@
-
 import { Link } from 'react-router-dom';
-
 const Footer = () => {
   const currentYear = new Date().getFullYear();
-  
-  const footerLinks = [
-    {
-      title: "Company",
-      links: [
-        { name: "About Us", path: "/about" },
-        { name: "Careers", path: "/careers" },
-        { name: "Press", path: "/press" },
-        { name: "Contact", path: "/contact" }
-      ]
-    },
-    {
-      title: "Platform",
-      links: [
-        { name: "How It Works", path: "/about" },
-        { name: "Browse Listings", path: "/listings" },
-        { name: "Post an Offer", path: "/post" },
-        { name: "Pricing", path: "/pricing" }
-      ]
-    },
-    {
-      title: "Resources",
-      links: [
-        { name: "Blog", path: "/blog" },
-        { name: "FAQ", path: "/faq" },
-        { name: "Support", path: "/support" },
-        { name: "Terms of Service", path: "/terms" }
-      ]
-    }
-  ];
-
-  return (
-    <footer className="bg-white border-t border-gray-100">
+  const footerLinks = [{
+    title: "Company",
+    links: [{
+      name: "About Us",
+      path: "/about"
+    }, {
+      name: "Careers",
+      path: "/careers"
+    }, {
+      name: "Press",
+      path: "/press"
+    }, {
+      name: "Contact",
+      path: "/contact"
+    }]
+  }, {
+    title: "Platform",
+    links: [{
+      name: "How It Works",
+      path: "/about"
+    }, {
+      name: "Browse Listings",
+      path: "/listings"
+    }, {
+      name: "Post an Offer",
+      path: "/post"
+    }, {
+      name: "Pricing",
+      path: "/pricing"
+    }]
+  }, {
+    title: "Resources",
+    links: [{
+      name: "Blog",
+      path: "/blog"
+    }, {
+      name: "FAQ",
+      path: "/faq"
+    }, {
+      name: "Support",
+      path: "/support"
+    }, {
+      name: "Terms of Service",
+      path: "/terms"
+    }]
+  }];
+  return <footer className="bg-white border-t border-gray-100">
       <div className="container mx-auto px-4 md:px-6 py-12 md:py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
           <div className="lg:col-span-2">
             <Link to="/" className="inline-block mb-6">
-              <span className="text-xl font-semibold bg-clip-text text-transparent bg-gradient-to-r from-black to-medium-blue">
-                CreditExchange
-              </span>
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-black to-medium-blue font-bold text-3xl">Credivou</span>
             </Link>
-            <p className="text-gray-600 mb-6 max-w-md">
-              The secure marketplace for exchanging premium credit card offers. Connect with buyers and sellers looking for exclusive invitations.
-            </p>
+            <p className="text-gray-600 mb-6 max-w-md">The secure marketplace for exchanging premium credit card offers. Connect with buyers and sellers looking for exclusive offers. </p>
             <div className="flex space-x-4">
               <a href="#" className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center text-gray-600 hover:bg-soft-blue hover:text-medium-blue transition-all">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -75,25 +83,18 @@ const Footer = () => {
             </div>
           </div>
           
-          {footerLinks.map((section) => (
-            <div key={section.title}>
+          {footerLinks.map(section => <div key={section.title}>
               <h3 className="font-semibold text-sm text-gray-800 uppercase tracking-wider mb-4">
                 {section.title}
               </h3>
               <ul className="space-y-3">
-                {section.links.map((link) => (
-                  <li key={link.name}>
-                    <Link 
-                      to={link.path} 
-                      className="text-gray-600 hover:text-medium-blue transition-colors"
-                    >
+                {section.links.map(link => <li key={link.name}>
+                    <Link to={link.path} className="text-gray-600 hover:text-medium-blue transition-colors">
                       {link.name}
                     </Link>
-                  </li>
-                ))}
+                  </li>)}
               </ul>
-            </div>
-          ))}
+            </div>)}
         </div>
         
         <div className="border-t border-gray-100 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
@@ -113,8 +114,6 @@ const Footer = () => {
           </div>
         </div>
       </div>
-    </footer>
-  );
+    </footer>;
 };
-
 export default Footer;
