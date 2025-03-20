@@ -4,8 +4,8 @@ import { motion } from 'framer-motion';
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import SearchBar from '@/components/listings/SearchBar';
-import ListingFilters from './components/listings/ListingFilters';
-import ListingsGrid from './components/listings/ListingsGrid';
+import ListingFilters from '@/components/listings/ListingFilters';
+import ListingsGrid from '@/components/listings/ListingsGrid';
 import ListingCTA from '@/components/listings/ListingCTA';
 import { allListings, categories, issuers } from '@/components/listings/ListingsData';
 
