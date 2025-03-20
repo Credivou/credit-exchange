@@ -1,5 +1,6 @@
 
 import { Link } from 'react-router-dom';
+
 const Footer = () => {
   const currentYear = new Date().getFullYear();
   const footerLinks = [{
@@ -48,6 +49,7 @@ const Footer = () => {
       path: "/terms"
     }]
   }];
+
   return <footer className="bg-white border-t border-gray-100">
       <div className="container mx-auto px-4 md:px-6 py-12 md:py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
@@ -117,4 +119,5 @@ const Footer = () => {
       </div>
     </footer>;
 };
+
 export default Footer;

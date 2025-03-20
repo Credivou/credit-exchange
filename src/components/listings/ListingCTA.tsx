@@ -9,14 +9,19 @@ const ListingCTA = () => {
         <div className="bg-medium-blue rounded-2xl p-8 md:p-12">
           <div className="max-w-3xl mx-auto text-center">
             <h2 className="text-3xl font-bold text-white mb-6">
-              Have a credit card offer to share?
+              Ready to Share Your Exclusive Credit Card Offers?
             </h2>
             <p className="text-white/80 text-lg mb-8">
-              List your exclusive credit card invitation and start earning today
+              Join our marketplace today and start earning from your unused credit card invitations
             </p>
-            <Button size="lg" className="bg-white text-medium-blue hover:bg-white/90 rounded-full">
-              Post Your Offer
-            </Button>
+            <div className="flex flex-col sm:flex-row justify-center gap-4">
+              <Button size="lg" className="bg-white text-medium-blue hover:bg-white/90 rounded-full">
+                Post an Offer
+              </Button>
+              <Button size="lg" variant="outline" className="text-white border-white hover:bg-white/10 rounded-full">
+                Learn More
+              </Button>
+            </div>
           </div>
         </div>
       </div>

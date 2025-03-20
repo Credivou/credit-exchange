@@ -1,11 +1,14 @@
+
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Menu, X } from 'lucide-react';
+
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
+
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 10) {
@@ -14,13 +17,16 @@ const Navbar = () => {
         setIsScrolled(false);
       }
     };
+
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
   useEffect(() => {
     // Close mobile menu when route changes
     setIsMenuOpen(false);
   }, [location.pathname]);
+
   const navItems = [{
     name: 'Home',
     path: '/'
@@ -34,6 +40,7 @@ const Navbar = () => {
     name: 'Contact',
     path: '/contact'
   }];
+
   return <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'glass-effect py-3 shadow-sm' : 'bg-transparent py-5'}`}>
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex items-center justify-between">
@@ -82,4 +89,5 @@ const Navbar = () => {
       </div>
     </nav>;
 };
+
 export default Navbar;
