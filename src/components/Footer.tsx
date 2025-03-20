@@ -1,3 +1,4 @@
+
 import { Link } from 'react-router-dom';
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -54,7 +55,7 @@ const Footer = () => {
             <Link to="/" className="inline-block mb-6">
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-black to-medium-blue font-bold text-3xl">Credivou</span>
             </Link>
-            <p className="text-gray-600 mb-6 max-w-md">The secure marketplace for exchanging premium credit card offers. Connect with buyers and sellers looking for exclusive offers. </p>
+            <p className="text-gray-600 mb-6 max-w-md">The secure marketplace for exchanging premium credit card offers. Connect with buyers and sellers looking for exclusive offers. </p>
             <div className="flex space-x-4">
               <a href="#" className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center text-gray-600 hover:bg-soft-blue hover:text-medium-blue transition-all">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -99,7 +100,7 @@ const Footer = () => {
         
         <div className="border-t border-gray-100 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-gray-600 text-sm">
-            © {currentYear} CreditExchange. All rights reserved.
+            © {currentYear} Credivou. All rights reserved.
           </p>
           <div className="flex space-x-6 mt-4 md:mt-0">
             <Link to="/privacy" className="text-gray-600 hover:text-medium-blue text-sm">

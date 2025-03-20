@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Navbar from "@/components/Navbar";
@@ -381,7 +380,7 @@ const Listings = () => {
                             </div>
                           </div>
                           <div className="flex items-center justify-between mt-auto">
-                            <span className="text-xl font-semibold">${listing.price}</span>
+                            <span className="text-xl font-semibold">₹{listing.price}</span>
                             <Button variant="outline" className="rounded-full hover:bg-medium-blue hover:text-white">
                               View Details
                             </Button>
