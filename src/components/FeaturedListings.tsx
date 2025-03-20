@@ -1,4 +1,3 @@
-
 import { useEffect, useRef, useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -11,7 +10,7 @@ const mockListings = [
     id: 1,
     title: "Platinum Card Referral",
     issuer: "American Express",
-    price: 75,
+    price: 1950,
     benefits: ["60,000 Points Bonus", "Lounge Access", "$200 Travel Credit"],
     image: "https://images.unsplash.com/photo-1580508174046-170816f65662?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80",
     featured: true,
@@ -21,7 +20,7 @@ const mockListings = [
     id: 2,
     title: "Sapphire Reserve Invitation",
     issuer: "Chase",
-    price: 65,
+    price: 1850,
     benefits: ["50,000 Points Bonus", "Priority Pass", "$300 Travel Credit"],
     image: "https://images.unsplash.com/photo-1566613769130-c232c300b4bb?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80",
     featured: true,
@@ -31,7 +30,7 @@ const mockListings = [
     id: 3,
     title: "Venture X Invitation",
     issuer: "Capital One",
-    price: 55,
+    price: 1750,
     benefits: ["75,000 Miles Bonus", "Airport Lounges", "$300 Travel Credit"],
     image: "https://images.unsplash.com/photo-1567761790966-29293bbe0f9f?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80",
     featured: false,
@@ -41,7 +40,7 @@ const mockListings = [
     id: 4,
     title: "Gold Card Referral",
     issuer: "American Express",
-    price: 45,
+    price: 1250,
     benefits: ["40,000 Points Bonus", "4x on Dining", "$120 Dining Credit"],
     image: "https://images.unsplash.com/photo-1568913941351-8cfbf180eec8?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80",
     featured: false,
