@@ -9,12 +9,6 @@ const Footer = () => {
       name: "About Us",
       path: "/about"
     }, {
-      name: "Careers",
-      path: "/careers"
-    }, {
-      name: "Press",
-      path: "/press"
-    }, {
       name: "Contact",
       path: "/contact"
     }]
@@ -36,14 +30,8 @@ const Footer = () => {
   }, {
     title: "Resources",
     links: [{
-      name: "Blog",
-      path: "/blog"
-    }, {
       name: "FAQ",
       path: "/faq"
-    }, {
-      name: "Support",
-      path: "/support"
     }, {
       name: "Terms of Service",
       path: "/terms"
