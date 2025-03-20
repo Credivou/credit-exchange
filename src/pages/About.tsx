@@ -46,7 +46,7 @@ const About = () => {
               <span className="inline-block py-1 px-3 bg-soft-blue text-medium-blue rounded-full text-xs font-medium tracking-wide mb-4">
                 Our Story
               </span>
-              <h2 className="text-3xl font-bold mb-6">How CredivouStarted</h2>
+              <h2 className="text-3xl font-bold mb-6">How Credivou Started</h2>
               <p className="text-gray-600 mb-4">Credivou began when our founders identified a gap in the market: Many people receive exclusive credit card offers but don't use them, while others are actively searching for premium cards but lack access to special invitations.</p>
               <p className="text-gray-600 mb-4">
                 We developed a platform that allows credit card holders to monetize their unused invitations while helping others gain access to exclusive credit card products that offer substantial rewards, benefits, and sign-up bonuses.
