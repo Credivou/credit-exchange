@@ -1,27 +1,25 @@
-
 import { motion } from 'framer-motion';
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import HowItWorks from "@/components/HowItWorks";
 import { Button } from "@/components/ui/button";
-
 const About = () => {
-  return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.3 }}
-    >
+  return <motion.div initial={{
+    opacity: 0
+  }} animate={{
+    opacity: 1
+  }} exit={{
+    opacity: 0
+  }} transition={{
+    duration: 0.3
+  }}>
       <Navbar />
       
       {/* Hero Section */}
       <section className="pt-32 pb-20 md:pt-40 md:pb-32 bg-off-white">
         <div className="container mx-auto px-4 md:px-6">
           <div className="max-w-3xl mx-auto text-center">
-            <span className="inline-block py-1 px-3 bg-soft-blue text-medium-blue rounded-full text-xs font-medium tracking-wide mb-6">
-              About CreditExchange
-            </span>
+            <span className="inline-block py-1 px-3 bg-soft-blue text-medium-blue rounded-full text-xs font-medium tracking-wide mb-6">About Credivou</span>
             <h1 className="text-4xl md:text-5xl font-bold mb-6">The Premium Marketplace for Credit Card Offers</h1>
             <p className="text-lg text-gray-600 mb-8">
               We're revolutionizing how people access exclusive credit card offers by creating a secure marketplace for cardholders and interested applicants.
@@ -34,20 +32,22 @@ const About = () => {
       <section className="py-20">
         <div className="container mx-auto px-4 md:px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-              className="order-2 lg:order-1"
-            >
+            <motion.div initial={{
+            opacity: 0,
+            x: -20
+          }} whileInView={{
+            opacity: 1,
+            x: 0
+          }} transition={{
+            duration: 0.6
+          }} viewport={{
+            once: true
+          }} className="order-2 lg:order-1">
               <span className="inline-block py-1 px-3 bg-soft-blue text-medium-blue rounded-full text-xs font-medium tracking-wide mb-4">
                 Our Story
               </span>
-              <h2 className="text-3xl font-bold mb-6">How CreditExchange Started</h2>
-              <p className="text-gray-600 mb-4">
-                CreditExchange began when our founders identified a gap in the market: Many people receive exclusive credit card offers but don't use them, while others are actively searching for premium cards but lack access to special invitations.
-              </p>
+              <h2 className="text-3xl font-bold mb-6">How CredivouStarted</h2>
+              <p className="text-gray-600 mb-4">Credivou began when our founders identified a gap in the market: Many people receive exclusive credit card offers but don't use them, while others are actively searching for premium cards but lack access to special invitations.</p>
               <p className="text-gray-600 mb-4">
                 We developed a platform that allows credit card holders to monetize their unused invitations while helping others gain access to exclusive credit card products that offer substantial rewards, benefits, and sign-up bonuses.
               </p>
@@ -59,21 +59,21 @@ const About = () => {
               </Button>
             </motion.div>
             
-            <motion.div 
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-              className="order-1 lg:order-2"
-            >
+            <motion.div initial={{
+            opacity: 0,
+            x: 20
+          }} whileInView={{
+            opacity: 1,
+            x: 0
+          }} transition={{
+            duration: 0.6
+          }} viewport={{
+            once: true
+          }} className="order-1 lg:order-2">
               <div className="relative">
                 <div className="absolute -top-4 -left-4 w-24 h-24 bg-soft-blue rounded-full z-0"></div>
                 <div className="absolute -bottom-4 -right-4 w-32 h-32 bg-soft-blue rounded-full z-0"></div>
-                <img 
-                  src="https://images.unsplash.com/photo-1559526324-593bc073d938?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80" 
-                  alt="Credit Card Exchange" 
-                  className="rounded-lg w-full h-[400px] object-cover relative z-10 shadow-lg"
-                />
+                <img src="https://images.unsplash.com/photo-1559526324-593bc073d938?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80" alt="Credit Card Exchange" className="rounded-lg w-full h-[400px] object-cover relative z-10 shadow-lg" />
               </div>
             </motion.div>
           </div>
@@ -90,44 +90,40 @@ const About = () => {
             <span className="inline-block py-1 px-3 bg-soft-blue text-medium-blue rounded-full text-xs font-medium tracking-wide mb-4">
               Our Team
             </span>
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">Meet the People Behind CreditExchange</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-6">Meet the People Behind Credivou</h2>
             <p className="text-gray-600">
               Our dedicated team is committed to creating a secure, transparent marketplace for everyone
             </p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              {
-                name: "Alex Morgan",
-                role: "Co-Founder & CEO",
-                image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80"
-              },
-              {
-                name: "Taylor Chen",
-                role: "Co-Founder & CTO",
-                image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80"
-              },
-              {
-                name: "Jordan Smith",
-                role: "Head of Operations",
-                image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80"
-              }
-            ].map((member, index) => (
-              <motion.div
-                key={member.name}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                viewport={{ once: true }}
-              >
+            {[{
+            name: "Alex Morgan",
+            role: "Co-Founder & CEO",
+            image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80"
+          }, {
+            name: "Taylor Chen",
+            role: "Co-Founder & CTO",
+            image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80"
+          }, {
+            name: "Jordan Smith",
+            role: "Head of Operations",
+            image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80"
+          }].map((member, index) => <motion.div key={member.name} initial={{
+            opacity: 0,
+            y: 20
+          }} whileInView={{
+            opacity: 1,
+            y: 0
+          }} transition={{
+            duration: 0.5,
+            delay: index * 0.1
+          }} viewport={{
+            once: true
+          }}>
                 <div className="glass-card p-6 text-center h-full">
                   <div className="w-32 h-32 mx-auto mb-6 rounded-full overflow-hidden">
-                    <img 
-                      src={member.image} 
-                      alt={member.name} 
-                      className="w-full h-full object-cover"
-                    />
+                    <img src={member.image} alt={member.name} className="w-full h-full object-cover" />
                   </div>
                   <h3 className="text-xl font-semibold mb-1">{member.name}</h3>
                   <p className="text-gray-600 mb-4">{member.role}</p>
@@ -146,8 +142,7 @@ const About = () => {
                     </a>
                   </div>
                 </div>
-              </motion.div>
-            ))}
+              </motion.div>)}
           </div>
         </div>
       </section>
@@ -156,29 +151,35 @@ const About = () => {
       <section className="py-20">
         <div className="container mx-auto px-4 md:px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-            >
+            <motion.div initial={{
+            opacity: 0,
+            x: -20
+          }} whileInView={{
+            opacity: 1,
+            x: 0
+          }} transition={{
+            duration: 0.6
+          }} viewport={{
+            once: true
+          }}>
               <div className="relative">
                 <div className="absolute -top-4 -right-4 w-24 h-24 bg-soft-blue rounded-full z-0"></div>
                 <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-soft-blue rounded-full z-0"></div>
-                <img 
-                  src="https://images.unsplash.com/photo-1579532537598-459ecdaf39cc?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80" 
-                  alt="Our Values" 
-                  className="rounded-lg w-full h-[400px] object-cover relative z-10 shadow-lg"
-                />
+                <img src="https://images.unsplash.com/photo-1579532537598-459ecdaf39cc?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80" alt="Our Values" className="rounded-lg w-full h-[400px] object-cover relative z-10 shadow-lg" />
               </div>
             </motion.div>
             
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-            >
+            <motion.div initial={{
+            opacity: 0,
+            x: 20
+          }} whileInView={{
+            opacity: 1,
+            x: 0
+          }} transition={{
+            duration: 0.6
+          }} viewport={{
+            once: true
+          }}>
               <span className="inline-block py-1 px-3 bg-soft-blue text-medium-blue rounded-full text-xs font-medium tracking-wide mb-4">
                 Our Values
               </span>
@@ -230,9 +231,7 @@ const About = () => {
       <section className="py-24 bg-medium-blue">
         <div className="container mx-auto px-4 md:px-6">
           <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-              Join the CreditExchange Community
-            </h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">Join the Credivou Community</h2>
             <p className="text-white/80 text-lg mb-8">
               Start sharing your exclusive credit card offers or find your next premium card today
             </p>
@@ -249,8 +248,6 @@ const About = () => {
       </section>
       
       <Footer />
-    </motion.div>
-  );
+    </motion.div>;
 };
-
 export default About;
