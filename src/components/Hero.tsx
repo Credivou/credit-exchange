@@ -2,9 +2,11 @@
 import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { motion } from 'framer-motion';
+import PostOfferDialog from './PostOfferDialog';
 
 const Hero = () => {
   const [isVisible, setIsVisible] = useState(false);
+  const [postOfferDialogOpen, setPostOfferDialogOpen] = useState(false);
 
   useEffect(() => {
     setIsVisible(true);
@@ -66,7 +68,10 @@ const Hero = () => {
           </motion.p>
           
           <motion.div variants={fadeIn} className="flex flex-col sm:flex-row justify-center gap-4">
-            <Button className="rounded-full h-12 px-8 bg-medium-blue hover:bg-medium-blue/90 text-white">
+            <Button 
+              className="rounded-full h-12 px-8 bg-medium-blue hover:bg-medium-blue/90 text-white"
+              onClick={() => setPostOfferDialogOpen(true)}
+            >
               Post an Offer
             </Button>
             <Button variant="outline" className="rounded-full h-12 px-8 hover:bg-medium-blue hover:text-white transition-all">
@@ -120,6 +125,11 @@ const Hero = () => {
           </div>
         </motion.div>
       </div>
+
+      <PostOfferDialog 
+        open={postOfferDialogOpen} 
+        onOpenChange={setPostOfferDialogOpen} 
+      />
     </section>
   );
 };
