@@ -20,25 +20,16 @@ import {
   Gamepad, 
   Star, 
   Leaf,
-  CreditCard,
-  Landmark,
-  Smartphone
 } from "lucide-react";
+import { allListings } from './listings/ListingsData';
 
 type PostOfferFormValues = {
   category: string;
   description: string;
   cost: string;
-  paymentMethod: string;
 };
 
 type CategoryOption = {
-  value: string;
-  label: string;
-  icon: React.ReactNode;
-};
-
-type PaymentOption = {
   value: string;
   label: string;
   icon: React.ReactNode;
@@ -68,18 +59,11 @@ const PostOfferDialog = ({ open, onOpenChange }: PostOfferDialogProps) => {
     { value: "Wellness", label: "Wellness", icon: <Leaf className="w-5 h-5" /> },
   ];
 
-  const paymentOptions: PaymentOption[] = [
-    { value: "Credit/Debit Card", label: "Credit/Debit Card", icon: <CreditCard className="w-5 h-5" /> },
-    { value: "Net Banking", label: "Net Banking", icon: <Landmark className="w-5 h-5" /> },
-    { value: "UPI", label: "UPI", icon: <Smartphone className="w-5 h-5" /> },
-  ];
-
   const form = useForm<PostOfferFormValues>({
     defaultValues: {
       category: "",
       description: "",
       cost: "",
-      paymentMethod: "",
     },
   });
 
@@ -87,21 +71,6 @@ const PostOfferDialog = ({ open, onOpenChange }: PostOfferDialogProps) => {
     if (step === 1 && !form.getValues().category) {
       toast.error("Please select a category");
       return;
-    }
-    
-    if (step === 2) {
-      const description = form.getValues().description;
-      const cost = form.getValues().cost;
-      
-      if (!description) {
-        toast.error("Please enter a description for your offer");
-        return;
-      }
-      
-      if (!cost) {
-        toast.error("Please enter a cost for your offer");
-        return;
-      }
     }
     
     setStep(prev => prev + 1);
@@ -114,12 +83,26 @@ const PostOfferDialog = ({ open, onOpenChange }: PostOfferDialogProps) => {
   const onSubmit = (data: PostOfferFormValues) => {
     setIsSubmitting(true);
     
+    // Create a mock listing
+    const newListing = {
+      id: allListings.length + 1,
+      title: `New ${data.category} Offer`,
+      issuer: "User Added",
+      price: Number(data.cost),
+      benefits: [data.description.slice(0, 50) + "..."],
+      image: "https://images.unsplash.com/photo-1556742502-ec7c0e9f34b1?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80",
+      featured: false,
+      new: true,
+      category: data.category,
+    };
+    
     // Simulate API call
     setTimeout(() => {
       console.log("Form data:", data);
-      toast.success("Your offer has been created successfully! Redirecting to payment...");
+      // In a real app, we would call an API to add this listing
+      allListings.unshift(newListing);
+      toast.success("Your offer has been posted successfully!");
       setIsSubmitting(false);
-      // Here you would typically redirect to a payment gateway
       onOpenChange(false);
       // Reset form and step
       form.reset();
@@ -205,42 +188,6 @@ const PostOfferDialog = ({ open, onOpenChange }: PostOfferDialogProps) => {
             />
           </>
         );
-      case 3:
-        return (
-          <FormField
-            control={form.control}
-            name="paymentMethod"
-            render={({ field }) => (
-              <FormItem className="space-y-3">
-                <FormLabel>Select Payment Method</FormLabel>
-                <FormControl>
-                  <RadioGroup
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                    className="space-y-3"
-                  >
-                    {paymentOptions.map((option) => (
-                      <FormItem key={option.value} className="flex items-center space-x-3 space-y-0 p-3 border rounded-md hover:bg-slate-50">
-                        <FormControl>
-                          <RadioGroupItem value={option.value} />
-                        </FormControl>
-                        <div className="flex items-center space-x-2">
-                          {option.icon}
-                          <FormLabel className="font-normal cursor-pointer">
-                            {option.label}
-                          </FormLabel>
-                        </div>
-                      </FormItem>
-                    ))}
-                  </RadioGroup>
-                </FormControl>
-                <FormDescription>
-                  Your payment information is securely processed.
-                </FormDescription>
-              </FormItem>
-            )}
-          />
-        );
       default:
         return null;
     }
@@ -252,8 +199,6 @@ const PostOfferDialog = ({ open, onOpenChange }: PostOfferDialogProps) => {
         return "Choose a Category";
       case 2:
         return "Offer Details";
-      case 3:
-        return "Payment Method";
       default:
         return "Post an Offer";
     }
@@ -265,8 +210,6 @@ const PostOfferDialog = ({ open, onOpenChange }: PostOfferDialogProps) => {
         return "Select the category that best matches your credit card offer.";
       case 2:
         return "Provide details about your credit card offer.";
-      case 3:
-        return "Choose how you'd like to receive payment.";
       default:
         return "";
     }
@@ -298,7 +241,7 @@ const PostOfferDialog = ({ open, onOpenChange }: PostOfferDialogProps) => {
                 </Button>
               )}
               
-              {step < 3 ? (
+              {step < 2 ? (
                 <Button 
                   type="button" 
                   onClick={handleNext}
@@ -312,7 +255,7 @@ const PostOfferDialog = ({ open, onOpenChange }: PostOfferDialogProps) => {
                   disabled={isSubmitting}
                   className="sm:order-2"
                 >
-                  {isSubmitting ? "Processing..." : "Proceed to Payment"}
+                  {isSubmitting ? "Posting..." : "Post Offer"}
                 </Button>
               )}
             </DialogFooter>

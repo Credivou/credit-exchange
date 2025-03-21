@@ -8,6 +8,9 @@ import ListingFilters from '@/components/listings/ListingFilters';
 import ListingsGrid from '@/components/listings/ListingsGrid';
 import ListingCTA from '@/components/listings/ListingCTA';
 import { allListings, categories, issuers } from '@/components/listings/ListingsData';
+import PostOfferDialog from '@/components/PostOfferDialog';
+import { Button } from '@/components/ui/button';
+import { PlusCircle } from 'lucide-react';
 
 const Listings = () => {
   const [listings, setListings] = useState(allListings);
@@ -18,6 +21,7 @@ const Listings = () => {
   const [priceRange, setPriceRange] = useState([1000, 2000]);
   const [showFeaturedOnly, setShowFeaturedOnly] = useState(false);
   const [showNewOnly, setShowNewOnly] = useState(false);
+  const [postOfferDialogOpen, setPostOfferDialogOpen] = useState(false);
 
   const handleImageLoad = (index: number) => {
     const newLoadedState = [...isLoaded];
@@ -100,7 +104,18 @@ const Listings = () => {
             <p className="text-lg text-gray-600 mb-8">
               Browse our marketplace of exclusive credit card offers from other members
             </p>
-            <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+            <div className="flex flex-col md:flex-row gap-4 justify-center items-center">
+              <div className="w-full md:flex-1">
+                <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+              </div>
+              <Button 
+                className="w-full md:w-auto rounded-full flex items-center gap-2"
+                onClick={() => setPostOfferDialogOpen(true)}
+              >
+                <PlusCircle size={18} />
+                Post an Offer
+              </Button>
+            </div>
           </div>
         </div>
       </section>
@@ -127,7 +142,17 @@ const Listings = () => {
             <div className="lg:col-span-3">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-semibold">Available Offers</h2>
-                <p className="text-gray-600">{listings.length} listings found</p>
+                <div className="flex items-center gap-4">
+                  <p className="text-gray-600">{listings.length} listings found</p>
+                  <Button 
+                    className="md:hidden rounded-full"
+                    size="sm"
+                    onClick={() => setPostOfferDialogOpen(true)}
+                  >
+                    <PlusCircle size={16} className="mr-2" />
+                    Post
+                  </Button>
+                </div>
               </div>
               
               <ListingsGrid
@@ -142,6 +167,11 @@ const Listings = () => {
       
       <ListingCTA />
       <Footer />
+      
+      <PostOfferDialog
+        open={postOfferDialogOpen}
+        onOpenChange={setPostOfferDialogOpen}
+      />
     </motion.div>
   );
 };
