@@ -1,3 +1,4 @@
+
 export const allListings = [];
 
 export const categories = ["All", "Travel", "Dining", "Cash Back", "Airline", "Hotel"];

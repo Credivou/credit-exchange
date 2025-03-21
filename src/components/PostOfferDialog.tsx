@@ -81,11 +81,22 @@ const PostOfferDialog = ({ open, onOpenChange }: PostOfferDialogProps) => {
   };
 
   const onSubmit = (data: PostOfferFormValues) => {
+    // Validate required fields
+    if (!data.description.trim()) {
+      toast.error("Please enter a description");
+      return;
+    }
+
+    if (!data.cost || Number(data.cost) <= 0) {
+      toast.error("Please enter a valid price");
+      return;
+    }
+
     setIsSubmitting(true);
     
     // Create a mock listing
     const newListing = {
-      id: allListings.length + 1,
+      id: Date.now(), // Use timestamp for unique ID
       title: `New ${data.category} Offer`,
       issuer: "User Added",
       price: Number(data.cost),
