@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -9,11 +9,14 @@ import { toast } from "sonner";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "@/context/AuthContext";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { countriesData } from "@/utils/countriesData";
 
 const signUpSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   email: z.string().email("Please enter a valid email address"),
-  phone: z.string().min(10, "Please enter a valid phone number"),
+  countryCode: z.string().min(1, "Country code is required"),
+  phone: z.string().min(4, "Please enter a valid phone number"),
   country: z.string().min(2, "Country must be at least 2 characters"),
   city: z.string().min(2, "City must be at least 2 characters"),
 });
@@ -28,6 +31,7 @@ interface SignUpSheetProps {
 
 const SignUpSheet = ({ open, onOpenChange, onSuccess }: SignUpSheetProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [availableCities, setAvailableCities] = useState<string[]>([]);
   const { storeUserData } = useAuth();
 
   const form = useForm<SignUpValues>({
@@ -35,21 +39,44 @@ const SignUpSheet = ({ open, onOpenChange, onSuccess }: SignUpSheetProps) => {
     defaultValues: {
       name: "",
       email: "",
+      countryCode: "+1",
       phone: "",
       country: "",
       city: "",
     },
   });
 
+  // Watch the country field to update cities
+  const selectedCountry = form.watch("country");
+
+  // Update cities when country changes
+  useEffect(() => {
+    if (selectedCountry) {
+      const country = countriesData.find(c => c.name === selectedCountry);
+      if (country) {
+        setAvailableCities(country.cities);
+        
+        // Also update the country code
+        form.setValue("countryCode", country.code);
+        
+        // Reset city when country changes
+        form.setValue("city", "");
+      }
+    }
+  }, [selectedCountry, form]);
+
   const onSubmit = async (data: SignUpValues) => {
     setIsSubmitting(true);
     
     try {
+      // Combine country code and phone number
+      const fullPhone = `${data.countryCode}${data.phone}`;
+      
       // Store user data - ensure all properties are present and not optional
       const userData = {
         name: data.name,
         email: data.email,
-        phone: data.phone,
+        phone: fullPhone,
         country: data.country,
         city: data.city
       };
@@ -113,19 +140,49 @@ const SignUpSheet = ({ open, onOpenChange, onSuccess }: SignUpSheetProps) => {
               )}
             />
             
-            <FormField
-              control={form.control}
-              name="phone"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Phone Number</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter your phone number" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="flex gap-2 items-start">
+              <FormField
+                control={form.control}
+                name="countryCode"
+                render={({ field }) => (
+                  <FormItem className="w-1/4">
+                    <FormLabel>Code</FormLabel>
+                    <Select
+                      value={field.value}
+                      onValueChange={field.onChange}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Code" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent className="max-h-[200px]">
+                        {countriesData.map(country => (
+                          <SelectItem key={country.code} value={country.code}>
+                            {country.code}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="phone"
+                render={({ field }) => (
+                  <FormItem className="flex-1">
+                    <FormLabel>Phone Number</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter your phone number" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
             
             <FormField
               control={form.control}
@@ -133,9 +190,23 @@ const SignUpSheet = ({ open, onOpenChange, onSuccess }: SignUpSheetProps) => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Country</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Your country" {...field} />
-                  </FormControl>
+                  <Select
+                    value={field.value}
+                    onValueChange={field.onChange}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select your country" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent className="max-h-[200px]">
+                      {countriesData.map(country => (
+                        <SelectItem key={country.name} value={country.name}>
+                          {country.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}
@@ -147,9 +218,24 @@ const SignUpSheet = ({ open, onOpenChange, onSuccess }: SignUpSheetProps) => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>City</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Your city" {...field} />
-                  </FormControl>
+                  <Select
+                    value={field.value}
+                    onValueChange={field.onChange}
+                    disabled={!selectedCountry || availableCities.length === 0}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select your city" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent className="max-h-[200px]">
+                      {availableCities.map(city => (
+                        <SelectItem key={city} value={city}>
+                          {city}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}

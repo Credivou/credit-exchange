@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -49,8 +49,13 @@ const LoginSheet = ({ open, onOpenChange, onLoginSuccess }: LoginSheetProps) => 
     },
   });
 
+  useEffect(() => {
+    if (step === "otp") {
+      otpForm.reset({ otp: "" });
+    }
+  }, [step, otpForm, open]);
+
   const generateOTP = (): string => {
-    // Generate a random 6-digit OTP
     return Math.floor(100000 + Math.random() * 900000).toString();
   };
 
@@ -58,7 +63,6 @@ const LoginSheet = ({ open, onOpenChange, onLoginSuccess }: LoginSheetProps) => 
     setIsSubmitting(true);
     
     try {
-      // Check if user exists
       const userData = getUserData();
       if (!userData || userData.email !== data.email) {
         toast.error("No account found with this email. Please sign up first.");
@@ -66,14 +70,12 @@ const LoginSheet = ({ open, onOpenChange, onLoginSuccess }: LoginSheetProps) => 
         return;
       }
       
-      // Generate new OTP
       const newOtp = generateOTP();
       setCurrentOtp(newOtp);
       
       console.log("Generated OTP:", newOtp);
       console.log("Sending OTP to email:", data.email);
       
-      // In a real app, this would call an API to send OTP email
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       setUserEmail(data.email);
@@ -91,14 +93,12 @@ const LoginSheet = ({ open, onOpenChange, onLoginSuccess }: LoginSheetProps) => 
     setIsSubmitting(true);
     
     try {
-      // Verify OTP
       if (data.otp !== currentOtp) {
         toast.error("Invalid OTP. Please check and try again.");
         setIsSubmitting(false);
         return;
       }
       
-      // Get user data and log in
       const userData = getUserData();
       if (userData) {
         login(userData);
@@ -106,7 +106,6 @@ const LoginSheet = ({ open, onOpenChange, onLoginSuccess }: LoginSheetProps) => 
         onOpenChange(false);
         onLoginSuccess();
         
-        // Reset forms for next time
         emailForm.reset();
         otpForm.reset();
         setStep("email");
@@ -124,14 +123,12 @@ const LoginSheet = ({ open, onOpenChange, onLoginSuccess }: LoginSheetProps) => 
 
   const handleResendOTP = async () => {
     try {
-      // Generate new OTP
       const newOtp = generateOTP();
       setCurrentOtp(newOtp);
       
       console.log("Resending OTP to:", userEmail);
       console.log("New OTP:", newOtp);
       
-      // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 800));
       
       toast.success(`New OTP sent to your email: ${newOtp}`);
@@ -143,7 +140,7 @@ const LoginSheet = ({ open, onOpenChange, onLoginSuccess }: LoginSheetProps) => 
 
   const handleBack = () => {
     setStep("email");
-    otpForm.reset();
+    otpForm.reset({ otp: "" });
   };
 
   return (
