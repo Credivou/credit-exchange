@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
+import { useAuth } from "@/context/AuthContext";
 
 const emailSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -31,6 +32,8 @@ const LoginSheet = ({ open, onOpenChange, onLoginSuccess }: LoginSheetProps) => 
   const [step, setStep] = useState<"email" | "otp">("email");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [userEmail, setUserEmail] = useState("");
+  const [currentOtp, setCurrentOtp] = useState("");
+  const { getUserData, login } = useAuth();
 
   const emailForm = useForm<EmailFormValues>({
     resolver: zodResolver(emailSchema),
@@ -46,19 +49,36 @@ const LoginSheet = ({ open, onOpenChange, onLoginSuccess }: LoginSheetProps) => 
     },
   });
 
+  const generateOTP = (): string => {
+    // Generate a random 6-digit OTP
+    return Math.floor(100000 + Math.random() * 900000).toString();
+  };
+
   const handleEmailSubmit = async (data: EmailFormValues) => {
     setIsSubmitting(true);
     
     try {
-      // In a real app, this would call an API to send OTP email
+      // Check if user exists
+      const userData = getUserData();
+      if (!userData || userData.email !== data.email) {
+        toast.error("No account found with this email. Please sign up first.");
+        setIsSubmitting(false);
+        return;
+      }
+      
+      // Generate new OTP
+      const newOtp = generateOTP();
+      setCurrentOtp(newOtp);
+      
+      console.log("Generated OTP:", newOtp);
       console.log("Sending OTP to email:", data.email);
       
-      // Simulate API call
+      // In a real app, this would call an API to send OTP email
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       setUserEmail(data.email);
       setStep("otp");
-      toast.success("OTP sent to your email address");
+      toast.success(`OTP sent to your email: ${newOtp}`);
     } catch (error) {
       console.error("Error sending OTP:", error);
       toast.error("Failed to send OTP. Please try again.");
@@ -71,20 +91,29 @@ const LoginSheet = ({ open, onOpenChange, onLoginSuccess }: LoginSheetProps) => 
     setIsSubmitting(true);
     
     try {
-      // In a real app, this would verify the OTP with your backend
-      console.log("Verifying OTP:", data.otp, "for email:", userEmail);
+      // Verify OTP
+      if (data.otp !== currentOtp) {
+        toast.error("Invalid OTP. Please check and try again.");
+        setIsSubmitting(false);
+        return;
+      }
       
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      toast.success("Login successful!");
-      onOpenChange(false);
-      onLoginSuccess();
-      
-      // Reset forms for next time
-      emailForm.reset();
-      otpForm.reset();
-      setStep("email");
+      // Get user data and log in
+      const userData = getUserData();
+      if (userData) {
+        login(userData);
+        toast.success("Login successful!");
+        onOpenChange(false);
+        onLoginSuccess();
+        
+        // Reset forms for next time
+        emailForm.reset();
+        otpForm.reset();
+        setStep("email");
+        setCurrentOtp("");
+      } else {
+        toast.error("User data not found. Please sign up first.");
+      }
     } catch (error) {
       console.error("Error verifying OTP:", error);
       toast.error("Invalid OTP. Please try again.");
@@ -95,13 +124,17 @@ const LoginSheet = ({ open, onOpenChange, onLoginSuccess }: LoginSheetProps) => 
 
   const handleResendOTP = async () => {
     try {
-      // In a real app, this would resend the OTP
+      // Generate new OTP
+      const newOtp = generateOTP();
+      setCurrentOtp(newOtp);
+      
       console.log("Resending OTP to:", userEmail);
+      console.log("New OTP:", newOtp);
       
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 800));
       
-      toast.success("New OTP sent to your email");
+      toast.success(`New OTP sent to your email: ${newOtp}`);
     } catch (error) {
       console.error("Error resending OTP:", error);
       toast.error("Failed to resend OTP. Please try again.");

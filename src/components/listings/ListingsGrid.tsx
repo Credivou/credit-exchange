@@ -3,6 +3,11 @@ import { useState } from 'react';
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import PaymentDialog from "@/components/PaymentDialog";
+import NegotiateDialog from "@/components/NegotiateDialog";
+import { Button } from "@/components/ui/button";
+import { ShoppingCart, MessageSquare } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
+import { toast } from "sonner";
 
 interface Listing {
   id: number;
@@ -25,10 +30,22 @@ interface ListingsGridProps {
 const ListingsGrid = ({ listings, isLoaded, handleImageLoad }: ListingsGridProps) => {
   const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
   const [paymentDialogOpen, setPaymentDialogOpen] = useState(false);
+  const [negotiateDialogOpen, setNegotiateDialogOpen] = useState(false);
+  const { isLoggedIn } = useAuth();
 
   const handlePurchase = (listing: Listing) => {
+    if (!isLoggedIn) {
+      toast.error("Please log in to purchase offers");
+      return;
+    }
+    
     setSelectedListing(listing);
     setPaymentDialogOpen(true);
+  };
+
+  const handleNegotiate = (listing: Listing) => {
+    setSelectedListing(listing);
+    setNegotiateDialogOpen(true);
   };
 
   return (
@@ -74,14 +91,27 @@ const ListingsGrid = ({ listings, isLoaded, handleImageLoad }: ListingsGridProps
                 </div>
               </CardContent>
               
-              <CardFooter className="p-4 pt-0 flex justify-between items-center border-t border-gray-100 mt-4">
-                <div className="text-xl font-semibold text-medium-blue">₹{listing.price}</div>
-                <button 
-                  className="px-4 py-2 bg-medium-blue text-white rounded-full text-sm font-medium hover:bg-medium-blue/90 transition-colors"
-                  onClick={() => handlePurchase(listing)}
-                >
-                  Purchase Offer
-                </button>
+              <CardFooter className="p-4 pt-0 flex flex-col gap-3 border-t border-gray-100 mt-4">
+                <div className="flex justify-between items-center w-full">
+                  <span className="text-xl font-semibold text-medium-blue">₹{listing.price}</span>
+                </div>
+                <div className="flex gap-2 w-full">
+                  <Button 
+                    variant="outline"
+                    className="w-1/2 gap-1"
+                    onClick={() => handleNegotiate(listing)}
+                  >
+                    <MessageSquare className="h-4 w-4" />
+                    Negotiate
+                  </Button>
+                  <Button 
+                    className="w-1/2 bg-medium-blue hover:bg-medium-blue/90 gap-1"
+                    onClick={() => handlePurchase(listing)}
+                  >
+                    <ShoppingCart className="h-4 w-4" />
+                    Buy Now
+                  </Button>
+                </div>
               </CardFooter>
             </Card>
           ))}
@@ -94,11 +124,18 @@ const ListingsGrid = ({ listings, isLoaded, handleImageLoad }: ListingsGridProps
       )}
 
       {selectedListing && (
-        <PaymentDialog 
-          open={paymentDialogOpen} 
-          onOpenChange={setPaymentDialogOpen} 
-          listing={selectedListing} 
-        />
+        <>
+          <PaymentDialog 
+            open={paymentDialogOpen} 
+            onOpenChange={setPaymentDialogOpen} 
+            listing={selectedListing} 
+          />
+          <NegotiateDialog
+            open={negotiateDialogOpen}
+            onOpenChange={setNegotiateDialogOpen}
+            listing={selectedListing}
+          />
+        </>
       )}
     </>
   );

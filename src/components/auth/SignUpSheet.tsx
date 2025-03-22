@@ -8,6 +8,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useAuth } from "@/context/AuthContext";
 
 const signUpSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -27,6 +28,7 @@ interface SignUpSheetProps {
 
 const SignUpSheet = ({ open, onOpenChange, onSuccess }: SignUpSheetProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { storeUserData } = useAuth();
 
   const form = useForm<SignUpValues>({
     resolver: zodResolver(signUpSchema),
@@ -43,10 +45,12 @@ const SignUpSheet = ({ open, onOpenChange, onSuccess }: SignUpSheetProps) => {
     setIsSubmitting(true);
     
     try {
-      // Simulate API call
+      // Store user data
+      storeUserData(data);
+      
       console.log("Creating account with data:", data);
       
-      // In a real app, you would send this data to your backend
+      // Simulate API call for OTP verification setup
       await new Promise(resolve => setTimeout(resolve, 1500));
       
       toast.success("Account created successfully! You can now log in.");
