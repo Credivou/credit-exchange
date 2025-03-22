@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -8,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { useAuth } from "@/context/AuthContext";
 import {
   Utensils, 
   ShoppingBag, 
@@ -43,6 +43,7 @@ type PostOfferDialogProps = {
 const PostOfferDialog = ({ open, onOpenChange }: PostOfferDialogProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [step, setStep] = useState(1);
+  const { isLoggedIn } = useAuth();
 
   const categories: CategoryOption[] = [
     { value: "Dining", label: "Dining", icon: <Utensils className="w-5 h-5" /> },
@@ -68,6 +69,12 @@ const PostOfferDialog = ({ open, onOpenChange }: PostOfferDialogProps) => {
   });
 
   const handleNext = () => {
+    if (!isLoggedIn) {
+      toast.error("Please log in to post an offer");
+      onOpenChange(false);
+      return;
+    }
+    
     if (step === 1 && !form.getValues().category) {
       toast.error("Please select a category");
       return;
@@ -81,6 +88,12 @@ const PostOfferDialog = ({ open, onOpenChange }: PostOfferDialogProps) => {
   };
 
   const onSubmit = (data: PostOfferFormValues) => {
+    if (!isLoggedIn) {
+      toast.error("Please log in to post an offer");
+      onOpenChange(false);
+      return;
+    }
+
     // Validate required fields
     if (!data.description.trim()) {
       toast.error("Please enter a description");
@@ -236,42 +249,54 @@ const PostOfferDialog = ({ open, onOpenChange }: PostOfferDialogProps) => {
           </DialogDescription>
         </DialogHeader>
 
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            {renderStepContent()}
+        {!isLoggedIn ? (
+          <div className="py-6 text-center">
+            <p className="mb-4 text-muted-foreground">You need to be logged in to post an offer</p>
+            <Button 
+              onClick={() => onOpenChange(false)} 
+              className="mx-auto"
+            >
+              Close
+            </Button>
+          </div>
+        ) : (
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              {renderStepContent()}
 
-            <DialogFooter className="flex flex-col sm:flex-row sm:justify-between sm:space-x-2">
-              {step > 1 && (
-                <Button 
-                  type="button" 
-                  variant="outline" 
-                  onClick={handleBack}
-                  className="sm:order-1"
-                >
-                  Back
-                </Button>
-              )}
-              
-              {step < 2 ? (
-                <Button 
-                  type="button" 
-                  onClick={handleNext}
-                  className="sm:order-2"
-                >
-                  Continue
-                </Button>
-              ) : (
-                <Button 
-                  type="submit" 
-                  disabled={isSubmitting}
-                  className="sm:order-2"
-                >
-                  {isSubmitting ? "Posting..." : "Post Offer"}
-                </Button>
-              )}
-            </DialogFooter>
-          </form>
-        </Form>
+              <DialogFooter className="flex flex-col sm:flex-row sm:justify-between sm:space-x-2">
+                {step > 1 && (
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    onClick={handleBack}
+                    className="sm:order-1"
+                  >
+                    Back
+                  </Button>
+                )}
+                
+                {step < 2 ? (
+                  <Button 
+                    type="button" 
+                    onClick={handleNext}
+                    className="sm:order-2"
+                  >
+                    Continue
+                  </Button>
+                ) : (
+                  <Button 
+                    type="submit" 
+                    disabled={isSubmitting}
+                    className="sm:order-2"
+                  >
+                    {isSubmitting ? "Posting..." : "Post Offer"}
+                  </Button>
+                )}
+              </DialogFooter>
+            </form>
+          </Form>
+        )}
       </DialogContent>
     </Dialog>
   );
