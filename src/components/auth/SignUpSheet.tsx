@@ -45,10 +45,18 @@ const SignUpSheet = ({ open, onOpenChange, onSuccess }: SignUpSheetProps) => {
     setIsSubmitting(true);
     
     try {
-      // Store user data
-      storeUserData(data);
+      // Store user data - ensure all properties are present and not optional
+      const userData = {
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        country: data.country,
+        city: data.city
+      };
       
-      console.log("Creating account with data:", data);
+      storeUserData(userData);
+      
+      console.log("Creating account with data:", userData);
       
       // Simulate API call for OTP verification setup
       await new Promise(resolve => setTimeout(resolve, 1500));
