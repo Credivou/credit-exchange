@@ -49,11 +49,21 @@ const LoginSheet = ({ open, onOpenChange, onLoginSuccess }: LoginSheetProps) => 
     },
   });
 
+  // Reset forms when sheet opens/closes
+  useEffect(() => {
+    if (open) {
+      emailForm.reset({ email: "" });
+      otpForm.reset({ otp: "" });
+      setStep("email");
+    }
+  }, [open, emailForm, otpForm]);
+
+  // Reset OTP form when switching to OTP step
   useEffect(() => {
     if (step === "otp") {
       otpForm.reset({ otp: "" });
     }
-  }, [step, otpForm, open]);
+  }, [step, otpForm]);
 
   const generateOTP = (): string => {
     return Math.floor(100000 + Math.random() * 900000).toString();
@@ -192,7 +202,7 @@ const LoginSheet = ({ open, onOpenChange, onLoginSuccess }: LoginSheetProps) => 
                   <FormItem className="mx-auto text-center">
                     <FormLabel>Verification Code</FormLabel>
                     <FormControl>
-                      <InputOTP maxLength={6} {...field}>
+                      <InputOTP maxLength={6} value={field.value} onChange={field.onChange}>
                         <InputOTPGroup>
                           <InputOTPSlot index={0} />
                           <InputOTPSlot index={1} />
