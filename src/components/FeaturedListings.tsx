@@ -39,7 +39,7 @@ const FeaturedListings = () => {
     // Use the real listings array for featured listings
     setFeaturedListings(allListings.filter(listing => listing.featured).slice(0, 4));
     setIsLoaded(Array(allListings.filter(listing => listing.featured).length).fill(false));
-  }, [allListings.length]);
+  }, []);
 
   const handleViewAllClick = () => {
     navigate('/listings');
