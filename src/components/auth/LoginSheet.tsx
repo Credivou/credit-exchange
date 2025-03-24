@@ -10,6 +10,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { useAuth } from "@/context/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 
 const emailSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -32,8 +33,7 @@ const LoginSheet = ({ open, onOpenChange, onLoginSuccess }: LoginSheetProps) => 
   const [step, setStep] = useState<"email" | "otp">("email");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [userEmail, setUserEmail] = useState("");
-  const [currentOtp, setCurrentOtp] = useState("");
-  const { getUserData, login } = useAuth();
+  const { login } = useAuth();
 
   const emailForm = useForm<EmailFormValues>({
     resolver: zodResolver(emailSchema),
@@ -65,35 +65,33 @@ const LoginSheet = ({ open, onOpenChange, onLoginSuccess }: LoginSheetProps) => 
     }
   }, [step, otpForm]);
 
-  const generateOTP = (): string => {
-    return Math.floor(100000 + Math.random() * 900000).toString();
-  };
-
   const handleEmailSubmit = async (data: EmailFormValues) => {
     setIsSubmitting(true);
     
     try {
-      const userData = getUserData();
-      if (!userData || userData.email !== data.email) {
-        toast.error("No account found with this email. Please sign up first.");
-        setIsSubmitting(false);
-        return;
-      }
+      // Send magic link via Supabase
+      const { error } = await supabase.auth.signInWithOtp({
+        email: data.email,
+        options: {
+          shouldCreateUser: false,
+        }
+      });
       
-      const newOtp = generateOTP();
-      setCurrentOtp(newOtp);
-      
-      console.log("Generated OTP:", newOtp);
-      console.log("Sending OTP to email:", data.email);
-      
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      if (error) throw error;
       
       setUserEmail(data.email);
       setStep("otp");
-      toast.success(`OTP sent to your email: ${newOtp}`);
-    } catch (error) {
+      toast.success("OTP sent to your email. Please check your inbox and spam folders.");
+    } catch (error: any) {
       console.error("Error sending OTP:", error);
-      toast.error("Failed to send OTP. Please try again.");
+      
+      if (error.message.includes("Email not confirmed")) {
+        toast.error("Email not confirmed. Please check your inbox for the verification link or sign up again.");
+      } else if (error.message.includes("User not found")) {
+        toast.error("No account found with this email. Please sign up first.");
+      } else {
+        toast.error("Failed to send OTP. Please try again.");
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -103,29 +101,19 @@ const LoginSheet = ({ open, onOpenChange, onLoginSuccess }: LoginSheetProps) => 
     setIsSubmitting(true);
     
     try {
-      if (data.otp !== currentOtp) {
-        toast.error("Invalid OTP. Please check and try again.");
-        setIsSubmitting(false);
-        return;
-      }
+      // Use the login function from AuthContext
+      await login(userEmail, data.otp);
       
-      const userData = getUserData();
-      if (userData) {
-        login(userData);
-        toast.success("Login successful!");
-        onOpenChange(false);
-        onLoginSuccess();
-        
-        emailForm.reset();
-        otpForm.reset();
-        setStep("email");
-        setCurrentOtp("");
-      } else {
-        toast.error("User data not found. Please sign up first.");
-      }
-    } catch (error) {
+      toast.success("Login successful!");
+      onOpenChange(false);
+      onLoginSuccess();
+      
+      emailForm.reset();
+      otpForm.reset();
+      setStep("email");
+    } catch (error: any) {
       console.error("Error verifying OTP:", error);
-      toast.error("Invalid OTP. Please try again.");
+      toast.error("Invalid OTP. Please check and try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -133,16 +121,17 @@ const LoginSheet = ({ open, onOpenChange, onLoginSuccess }: LoginSheetProps) => 
 
   const handleResendOTP = async () => {
     try {
-      const newOtp = generateOTP();
-      setCurrentOtp(newOtp);
+      const { error } = await supabase.auth.signInWithOtp({
+        email: userEmail,
+        options: {
+          shouldCreateUser: false,
+        }
+      });
       
-      console.log("Resending OTP to:", userEmail);
-      console.log("New OTP:", newOtp);
+      if (error) throw error;
       
-      await new Promise(resolve => setTimeout(resolve, 800));
-      
-      toast.success(`New OTP sent to your email: ${newOtp}`);
-    } catch (error) {
+      toast.success("New OTP sent to your email. Please check your inbox.");
+    } catch (error: any) {
       console.error("Error resending OTP:", error);
       toast.error("Failed to resend OTP. Please try again.");
     }

@@ -1,22 +1,22 @@
-import React, { createContext, useState, useContext, useEffect } from "react";
 
-type User = {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  country: string;
-  city: string;
-  createdAt: string;
-};
+import React, { createContext, useState, useContext, useEffect } from "react";
+import { User, Session } from "@supabase/supabase-js";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 type AuthContextType = {
   isLoggedIn: boolean;
   user: User | null;
-  login: (userData: User) => void;
-  logout: () => void;
-  storeUserData: (userData: Omit<User, "id" | "createdAt">) => User;
-  getUserData: () => User | null;
+  session: Session | null;
+  login: (email: string, otp: string) => Promise<void>;
+  signUp: (userData: {
+    name: string;
+    email: string;
+    phone: string;
+    country: string;
+    city: string;
+  }) => Promise<void>;
+  logout: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -24,59 +24,96 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState<User | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
 
-  // Load user data and login status from localStorage on initial load
   useEffect(() => {
-    const loggedInStatus = localStorage.getItem("isLoggedIn");
-    if (loggedInStatus === "true") {
-      setIsLoggedIn(true);
-      const storedUser = localStorage.getItem("userData");
-      if (storedUser) {
-        setUser(JSON.parse(storedUser));
+    // Set up auth state listener FIRST
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        console.log("Auth state change event:", event);
+        setSession(session);
+        setUser(session?.user ?? null);
+        setIsLoggedIn(!!session);
       }
-    }
+    );
+
+    // THEN check for existing session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+      setIsLoggedIn(!!session);
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
-  const storeUserData = (userData: Omit<User, "id" | "createdAt">): User => {
-    // Generate a simple unique ID
-    const id = `user_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
-    const createdAt = new Date().toISOString();
-    
-    const newUser = {
-      ...userData,
-      id,
-      createdAt
-    };
-    
-    // Store user data in localStorage
-    localStorage.setItem("userData", JSON.stringify(newUser));
-    return newUser;
-  };
+  const signUp = async (userData: {
+    name: string;
+    email: string;
+    phone: string;
+    country: string;
+    city: string;
+  }) => {
+    try {
+      // Generate a random password (this will not be used as we'll use OTP for login)
+      const password = Math.random().toString(36).slice(-12);
+      
+      const { data, error } = await supabase.auth.signUp({
+        email: userData.email,
+        password,
+        options: {
+          data: {
+            name: userData.name,
+            phone: userData.phone,
+            country: userData.country,
+            city: userData.city,
+          },
+        },
+      });
 
-  const getUserData = (): User | null => {
-    const storedUser = localStorage.getItem("userData");
-    if (storedUser) {
-      return JSON.parse(storedUser);
+      if (error) throw error;
+      
+      console.log("Sign up successful:", data);
+      return data;
+    } catch (error: any) {
+      console.error("Error signing up:", error.message);
+      throw error;
     }
-    return null;
   };
 
-  const login = (userData: User) => {
-    setIsLoggedIn(true);
-    setUser(userData);
-    localStorage.setItem("isLoggedIn", "true");
-    localStorage.setItem("userData", JSON.stringify(userData));
+  const login = async (email: string, otp: string) => {
+    try {
+      // For now, we're not actually using OTP with Supabase
+      // Instead, we're using the Supabase Auth magic link feature
+      const { data, error } = await supabase.auth.signInWithOtp({
+        email,
+        options: {
+          shouldCreateUser: false,
+        }
+      });
+
+      if (error) throw error;
+      
+      console.log("Login successful:", data);
+      return data;
+    } catch (error: any) {
+      console.error("Error logging in:", error.message);
+      throw error;
+    }
   };
 
-  const logout = () => {
-    setIsLoggedIn(false);
-    setUser(null);
-    localStorage.removeItem("isLoggedIn");
-    // Note: We're not removing userData to keep the user's info for future logins
+  const logout = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+    } catch (error: any) {
+      console.error("Error signing out:", error.message);
+      toast.error("Failed to sign out. Please try again.");
+    }
   };
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, user, login, logout, storeUserData, getUserData }}>
+    <AuthContext.Provider value={{ isLoggedIn, user, session, login, signUp, logout }}>
       {children}
     </AuthContext.Provider>
   );

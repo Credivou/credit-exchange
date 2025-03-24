@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -13,7 +14,7 @@ const Navbar = () => {
   const [isSignUpOpen, setIsSignUpOpen] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const location = useLocation();
-  const { isLoggedIn, login, logout, getUserData } = useAuth();
+  const { isLoggedIn, logout, user } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -33,18 +34,13 @@ const Navbar = () => {
     setIsMenuOpen(false);
   }, [location.pathname]);
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     toast.success("You have been logged out successfully");
   };
 
   const handleLoginSuccess = () => {
-    // Get user data and pass it to login
-    const userData = getUserData();
-    if (userData) {
-      login(userData);
-      toast.success("Welcome back to Credivou!");
-    }
+    toast.success("Welcome back to Credivou!");
   };
 
   const navItems = [{

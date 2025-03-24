@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -32,7 +31,7 @@ interface SignUpSheetProps {
 const SignUpSheet = ({ open, onOpenChange, onSuccess }: SignUpSheetProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [availableCities, setAvailableCities] = useState<string[]>([]);
-  const { storeUserData } = useAuth();
+  const { signUp } = useAuth();
 
   const form = useForm<SignUpValues>({
     resolver: zodResolver(signUpSchema),
@@ -72,29 +71,27 @@ const SignUpSheet = ({ open, onOpenChange, onSuccess }: SignUpSheetProps) => {
       // Combine country code and phone number
       const fullPhone = `${data.countryCode}${data.phone}`;
       
-      // Store user data - ensure all properties are present and not optional
-      const userData = {
+      // Pass user data to auth context
+      await signUp({
         name: data.name,
         email: data.email,
         phone: fullPhone,
         country: data.country,
         city: data.city
-      };
+      });
       
-      storeUserData(userData);
-      
-      console.log("Creating account with data:", userData);
-      
-      // Simulate API call for OTP verification setup
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      toast.success("Account created successfully! You can now log in.");
+      toast.success("Account created successfully! Check your email for a verification link.");
       form.reset();
       onOpenChange(false);
       onSuccess();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error creating account:", error);
-      toast.error("Failed to create account. Please try again.");
+      
+      if (error.message.includes("already registered")) {
+        toast.error("This email is already registered. Please log in instead.");
+      } else {
+        toast.error("Failed to create account. Please try again.");
+      }
     } finally {
       setIsSubmitting(false);
     }
