@@ -53,7 +53,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     phone: string;
     country: string;
     city: string;
-  }) => {
+  }): Promise<void> => {
     try {
       // Generate a random password (this will not be used as we'll use OTP for login)
       const password = Math.random().toString(36).slice(-12);
@@ -74,18 +74,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (error) throw error;
       
       console.log("Sign up successful:", data);
-      return data;
     } catch (error: any) {
       console.error("Error signing up:", error.message);
       throw error;
     }
   };
 
-  const login = async (email: string, otp: string) => {
+  const login = async (email: string, otp: string): Promise<void> => {
     try {
       // For now, we're not actually using OTP with Supabase
       // Instead, we're using the Supabase Auth magic link feature
-      const { data, error } = await supabase.auth.signInWithOtp({
+      const { error } = await supabase.auth.signInWithOtp({
         email,
         options: {
           shouldCreateUser: false,
@@ -94,8 +93,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (error) throw error;
       
-      console.log("Login successful:", data);
-      return data;
+      console.log("Login request sent successfully");
     } catch (error: any) {
       console.error("Error logging in:", error.message);
       throw error;
