@@ -12,6 +12,7 @@ import { useAuth } from "@/context/AuthContext";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { countriesData } from "@/utils/countriesData";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
 
 const signUpSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -33,7 +34,7 @@ interface SignUpSheetProps {
 const SignUpSheet = ({ open, onOpenChange, onSuccess }: SignUpSheetProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [availableCities, setAvailableCities] = useState<string[]>([]);
-  const { signUp } = useAuth();
+  const { signUp, loginWithGoogle } = useAuth();
 
   const form = useForm<SignUpValues>({
     resolver: zodResolver(signUpSchema),
@@ -99,6 +100,15 @@ const SignUpSheet = ({ open, onOpenChange, onSuccess }: SignUpSheetProps) => {
     }
   };
 
+  const handleGoogleSignUp = async () => {
+    try {
+      await loginWithGoogle();
+      // No need for toast here as the page will redirect
+    } catch (error) {
+      // Error is handled in the loginWithGoogle function
+    }
+  };
+
   // Function to get flag emoji for a country
   const getCountryFlag = (countryName: string) => {
     // Map of country names to ISO 3166-1 alpha-2 codes
@@ -138,8 +148,30 @@ const SignUpSheet = ({ open, onOpenChange, onSuccess }: SignUpSheetProps) => {
           </SheetDescription>
         </SheetHeader>
         
+        <div className="pt-4 pb-2">
+          <Button 
+            variant="outline" 
+            className="w-full" 
+            onClick={handleGoogleSignUp}
+          >
+            <svg className="mr-2 h-4 w-4" aria-hidden="true" focusable="false" data-prefix="fab" data-icon="google" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512">
+              <path fill="currentColor" d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z"></path>
+            </svg>
+            Sign up with Google
+          </Button>
+        </div>
+        
+        <div className="relative my-4">
+          <div className="absolute inset-0 flex items-center">
+            <Separator />
+          </div>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-background px-2 text-muted-foreground">Or with email</span>
+          </div>
+        </div>
+        
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5 pt-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
             <FormField
               control={form.control}
               name="name"
@@ -184,10 +216,13 @@ const SignUpSheet = ({ open, onOpenChange, onSuccess }: SignUpSheetProps) => {
                           <SelectValue placeholder="Code" />
                         </SelectTrigger>
                       </FormControl>
-                      <SelectContent className="max-h-[200px]">
+                      <SelectContent>
                         <ScrollArea className="h-[200px]">
                           {countriesData.map(country => (
-                            <SelectItem key={country.code} value={country.code}>
+                            <SelectItem 
+                              key={country.code} 
+                              value={country.code}
+                            >
                               <span className="mr-2">{getCountryFlag(country.name)}</span>
                               {country.code}
                             </SelectItem>

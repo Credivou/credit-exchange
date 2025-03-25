@@ -8,7 +8,7 @@ type AuthContextType = {
   isLoggedIn: boolean;
   user: User | null;
   session: Session | null;
-  login: (email: string, otp: string) => Promise<void>;
+  login: (email: string) => Promise<void>;
   signUp: (userData: {
     name: string;
     email: string;
@@ -16,6 +16,7 @@ type AuthContextType = {
     country: string;
     city: string;
   }) => Promise<void>;
+  loginWithGoogle: () => Promise<void>;
   logout: () => Promise<void>;
 };
 
@@ -68,7 +69,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             country: userData.country,
             city: userData.city,
           },
-          emailRedirectTo: window.location.origin,
+          emailRedirectTo: `${window.location.origin}/`,
         },
       });
 
@@ -81,15 +82,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const login = async (email: string, otp: string): Promise<void> => {
+  const login = async (email: string): Promise<void> => {
     try {
-      // For now, we're not actually using OTP with Supabase
-      // Instead, we're using the Supabase Auth magic link feature
       const { error } = await supabase.auth.signInWithOtp({
         email,
         options: {
           shouldCreateUser: false,
-          emailRedirectTo: window.location.origin,
+          emailRedirectTo: `${window.location.origin}/`,
         }
       });
 
@@ -98,6 +97,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       console.log("Login request sent successfully");
     } catch (error: any) {
       console.error("Error logging in:", error.message);
+      throw error;
+    }
+  };
+
+  const loginWithGoogle = async (): Promise<void> => {
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/`,
+        }
+      });
+
+      if (error) throw error;
+    } catch (error: any) {
+      console.error("Error signing in with Google:", error.message);
+      toast.error("Failed to sign in with Google. Please try again.");
       throw error;
     }
   };
@@ -113,7 +129,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, user, session, login, signUp, logout }}>
+    <AuthContext.Provider value={{ isLoggedIn, user, session, login, signUp, loginWithGoogle, logout }}>
       {children}
     </AuthContext.Provider>
   );
