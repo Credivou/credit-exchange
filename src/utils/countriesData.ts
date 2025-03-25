@@ -100,5 +100,60 @@ export const countriesData = [
     name: "Singapore",
     code: "+65",
     cities: ["Singapore"]
+  },
+  {
+    name: "Russia",
+    code: "+7",
+    cities: ["Moscow", "Saint Petersburg", "Novosibirsk", "Yekaterinburg", "Nizhny Novgorod", "Kazan", "Chelyabinsk", "Omsk", "Samara", "Rostov-on-Don"]
+  },
+  {
+    name: "Argentina",
+    code: "+54",
+    cities: ["Buenos Aires", "Córdoba", "Rosario", "Mendoza", "Tucumán", "La Plata", "Mar del Plata", "Salta", "Santa Fe", "San Juan"]
+  },
+  {
+    name: "Sweden",
+    code: "+46",
+    cities: ["Stockholm", "Gothenburg", "Malmö", "Uppsala", "Västerås", "Örebro", "Linköping", "Helsingborg", "Jönköping", "Norrköping"]
+  },
+  {
+    name: "Poland",
+    code: "+48",
+    cities: ["Warsaw", "Kraków", "Łódź", "Wrocław", "Poznań", "Gdańsk", "Szczecin", "Bydgoszcz", "Lublin", "Białystok"]
+  },
+  {
+    name: "Pakistan",
+    code: "+92",
+    cities: ["Karachi", "Lahore", "Faisalabad", "Rawalpindi", "Gujranwala", "Peshawar", "Multan", "Hyderabad", "Islamabad", "Quetta"]
+  },
+  {
+    name: "Egypt",
+    code: "+20",
+    cities: ["Cairo", "Alexandria", "Giza", "Shubra El-Kheima", "Port Said", "Suez", "Luxor", "Mansoura", "Tanta", "Asyut"]
+  },
+  {
+    name: "Nigeria",
+    code: "+234",
+    cities: ["Lagos", "Kano", "Ibadan", "Kaduna", "Port Harcourt", "Benin City", "Maiduguri", "Zaria", "Aba", "Jos"]
+  },
+  {
+    name: "Saudi Arabia",
+    code: "+966",
+    cities: ["Riyadh", "Jeddah", "Mecca", "Medina", "Dammam", "Ta'if", "Tabuk", "Buraidah", "Khamis Mushait", "Abha"]
+  },
+  {
+    name: "United Arab Emirates",
+    code: "+971",
+    cities: ["Dubai", "Abu Dhabi", "Sharjah", "Al Ain", "Ajman", "Ras Al Khaimah", "Fujairah", "Umm Al Quwain", "Khor Fakkan", "Dibba"]
+  },
+  {
+    name: "Israel",
+    code: "+972",
+    cities: ["Jerusalem", "Tel Aviv", "Haifa", "Rishon LeZion", "Petah Tikva", "Ashdod", "Netanya", "Be'er Sheva", "Holon", "Bnei Brak"]
+  },
+  {
+    name: "Thailand",
+    code: "+66",
+    cities: ["Bangkok", "Nonthaburi", "Nakhon Ratchasima", "Chiang Mai", "Hat Yai", "Udon Thani", "Pak Kret", "Surat Thani", "Pattaya", "Phuket"]
   }
 ];

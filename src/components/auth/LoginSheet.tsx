@@ -73,7 +73,7 @@ const LoginSheet = ({ open, onOpenChange, onLoginSuccess }: LoginSheetProps) => 
       const { error } = await supabase.auth.signInWithOtp({
         email: data.email,
         options: {
-          shouldCreateUser: false,
+          emailRedirectTo: window.location.origin,
         }
       });
       
@@ -85,9 +85,9 @@ const LoginSheet = ({ open, onOpenChange, onLoginSuccess }: LoginSheetProps) => 
     } catch (error: any) {
       console.error("Error sending OTP:", error);
       
-      if (error.message.includes("Email not confirmed")) {
+      if (error.message?.includes("Email not confirmed")) {
         toast.error("Email not confirmed. Please check your inbox for the verification link or sign up again.");
-      } else if (error.message.includes("User not found")) {
+      } else if (error.message?.includes("User not found")) {
         toast.error("No account found with this email. Please sign up first.");
       } else {
         toast.error("Failed to send OTP. Please try again.");
@@ -101,8 +101,14 @@ const LoginSheet = ({ open, onOpenChange, onLoginSuccess }: LoginSheetProps) => 
     setIsSubmitting(true);
     
     try {
-      // Use the login function from AuthContext
-      await login(userEmail, data.otp);
+      // Verify the OTP 
+      const { error } = await supabase.auth.verifyOtp({
+        email: userEmail,
+        token: data.otp,
+        type: 'email'
+      });
+      
+      if (error) throw error;
       
       toast.success("Login successful!");
       onOpenChange(false);
@@ -124,7 +130,7 @@ const LoginSheet = ({ open, onOpenChange, onLoginSuccess }: LoginSheetProps) => 
       const { error } = await supabase.auth.signInWithOtp({
         email: userEmail,
         options: {
-          shouldCreateUser: false,
+          emailRedirectTo: window.location.origin,
         }
       });
       

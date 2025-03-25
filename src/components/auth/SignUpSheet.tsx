@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -10,6 +11,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "@/context/AuthContext";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { countriesData } from "@/utils/countriesData";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const signUpSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -87,7 +89,7 @@ const SignUpSheet = ({ open, onOpenChange, onSuccess }: SignUpSheetProps) => {
     } catch (error: any) {
       console.error("Error creating account:", error);
       
-      if (error.message.includes("already registered")) {
+      if (error.message?.includes("already registered")) {
         toast.error("This email is already registered. Please log in instead.");
       } else {
         toast.error("Failed to create account. Please try again.");
@@ -95,6 +97,35 @@ const SignUpSheet = ({ open, onOpenChange, onSuccess }: SignUpSheetProps) => {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  // Function to get flag emoji for a country
+  const getCountryFlag = (countryName: string) => {
+    // Map of country names to ISO 3166-1 alpha-2 codes
+    const countryCodes: Record<string, string> = {
+      "United States": "US", "United Kingdom": "GB", "Canada": "CA", "Australia": "AU",
+      "Germany": "DE", "France": "FR", "India": "IN", "China": "CN", "Japan": "JP",
+      "Brazil": "BR", "Italy": "IT", "Spain": "ES", "Mexico": "MX", "South Korea": "KR",
+      "Netherlands": "NL", "South Africa": "ZA", "Turkey": "TR", "Malaysia": "MY",
+      "Indonesia": "ID", "Singapore": "SG", "Russia": "RU", "Israel": "IL", "Greece": "GR",
+      "Portugal": "PT", "Sweden": "SE", "Norway": "NO", "Denmark": "DK", "Finland": "FI",
+      "Poland": "PL", "Switzerland": "CH", "Austria": "AT", "Belgium": "BE", "Ireland": "IE",
+      "New Zealand": "NZ", "Thailand": "TH", "Vietnam": "VN", "Philippines": "PH",
+      "Egypt": "EG", "Argentina": "AR", "Chile": "CL", "Colombia": "CO", "Peru": "PE",
+      "Nigeria": "NG", "Kenya": "KE", "Ghana": "GH", "Morocco": "MA", "Saudi Arabia": "SA",
+      "United Arab Emirates": "AE", "Qatar": "QA", "Kuwait": "KW", "Bahrain": "BH",
+      "Pakistan": "PK", "Bangladesh": "BD", "Sri Lanka": "LK", "Nepal": "NP"
+    };
+    
+    const code = countryCodes[countryName] || "";
+    if (!code) return "";
+    
+    // Convert country code to regional indicator symbols (flag emoji)
+    return code
+      .toUpperCase()
+      .split('')
+      .map(char => String.fromCodePoint(char.charCodeAt(0) + 127397))
+      .join('');
   };
 
   return (
@@ -154,11 +185,14 @@ const SignUpSheet = ({ open, onOpenChange, onSuccess }: SignUpSheetProps) => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent className="max-h-[200px]">
-                        {countriesData.map(country => (
-                          <SelectItem key={country.code} value={country.code}>
-                            {country.code}
-                          </SelectItem>
-                        ))}
+                        <ScrollArea className="h-[200px]">
+                          {countriesData.map(country => (
+                            <SelectItem key={country.code} value={country.code}>
+                              <span className="mr-2">{getCountryFlag(country.name)}</span>
+                              {country.code}
+                            </SelectItem>
+                          ))}
+                        </ScrollArea>
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -196,12 +230,15 @@ const SignUpSheet = ({ open, onOpenChange, onSuccess }: SignUpSheetProps) => {
                         <SelectValue placeholder="Select your country" />
                       </SelectTrigger>
                     </FormControl>
-                    <SelectContent className="max-h-[200px]">
-                      {countriesData.map(country => (
-                        <SelectItem key={country.name} value={country.name}>
-                          {country.name}
-                        </SelectItem>
-                      ))}
+                    <SelectContent>
+                      <ScrollArea className="h-[200px]">
+                        {countriesData.map(country => (
+                          <SelectItem key={country.name} value={country.name}>
+                            <span className="mr-2">{getCountryFlag(country.name)}</span>
+                            {country.name}
+                          </SelectItem>
+                        ))}
+                      </ScrollArea>
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -225,12 +262,14 @@ const SignUpSheet = ({ open, onOpenChange, onSuccess }: SignUpSheetProps) => {
                         <SelectValue placeholder="Select your city" />
                       </SelectTrigger>
                     </FormControl>
-                    <SelectContent className="max-h-[200px]">
-                      {availableCities.map(city => (
-                        <SelectItem key={city} value={city}>
-                          {city}
-                        </SelectItem>
-                      ))}
+                    <SelectContent>
+                      <ScrollArea className="h-[200px]">
+                        {availableCities.map(city => (
+                          <SelectItem key={city} value={city}>
+                            {city}
+                          </SelectItem>
+                        ))}
+                      </ScrollArea>
                     </SelectContent>
                   </Select>
                   <FormMessage />

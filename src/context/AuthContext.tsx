@@ -68,6 +68,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             country: userData.country,
             city: userData.city,
           },
+          emailRedirectTo: window.location.origin,
         },
       });
 
@@ -88,6 +89,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         email,
         options: {
           shouldCreateUser: false,
+          emailRedirectTo: window.location.origin,
         }
       });
 
