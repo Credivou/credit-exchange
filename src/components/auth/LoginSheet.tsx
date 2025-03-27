@@ -5,17 +5,15 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "@/context/AuthContext";
 import { Separator } from "@/components/ui/separator";
-import { AlertCircle, Eye, EyeOff } from "lucide-react";
+import { AlertCircle, Mail } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 const loginSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
 type LoginFormValues = z.infer<typeof loginSchema>;
@@ -28,45 +26,50 @@ interface LoginSheetProps {
 
 const LoginSheet = ({ open, onOpenChange, onLoginSuccess }: LoginSheetProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
-  const { login, loginWithGoogle } = useAuth();
+  const { loginWithOTP, loginWithGoogle, isLoggedIn } = useAuth();
 
   const loginForm = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
       email: "",
-      password: "",
     },
   });
 
   // Reset form when sheet opens/closes
   useEffect(() => {
     if (open) {
-      loginForm.reset({ email: "", password: "" });
+      loginForm.reset({ email: "" });
       setLoginError(null);
     }
   }, [open, loginForm]);
+
+  // Check if user is logged in and close the sheet
+  useEffect(() => {
+    if (isLoggedIn && open) {
+      onLoginSuccess();
+      onOpenChange(false);
+    }
+  }, [isLoggedIn, open, onLoginSuccess, onOpenChange]);
 
   const handleLoginSubmit = async (data: LoginFormValues) => {
     setIsSubmitting(true);
     setLoginError(null);
     
     try {
-      // Login with email and password
-      await login(data.email, data.password);
+      // Login with OTP
+      await loginWithOTP(data.email);
       
-      onLoginSuccess();
-      onOpenChange(false);
+      // Note: The actual login success will be handled by the onAuthStateChange listener
+      // We don't close the sheet here because the user still needs to enter the OTP
+      // that will be sent to their email
     } catch (error: any) {
       console.error("Error logging in:", error);
       
       if (error.message?.includes("Email not confirmed")) {
         setLoginError("Your email is not confirmed. Please check your inbox for the verification link.");
-      } else if (error.message?.includes("Invalid login credentials")) {
-        setLoginError("Invalid email or password. Please try again.");
       } else {
-        setLoginError(error.message || "Failed to log in. Please try again.");
+        setLoginError(error.message || "Failed to send OTP. Please try again.");
       }
     } finally {
       setIsSubmitting(false);
@@ -82,17 +85,13 @@ const LoginSheet = ({ open, onOpenChange, onLoginSuccess }: LoginSheetProps) => 
     }
   };
 
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
-
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className="sm:max-w-md">
         <SheetHeader className="pb-4">
           <SheetTitle>Log in to your account</SheetTitle>
           <SheetDescription>
-            Enter your email and password to log in
+            Enter your email to receive a verification code
           </SheetDescription>
         </SheetHeader>
         
@@ -127,44 +126,8 @@ const LoginSheet = ({ open, onOpenChange, onLoginSuccess }: LoginSheetProps) => 
               )}
             />
             
-            <FormField
-              control={loginForm.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Password</FormLabel>
-                  <FormControl>
-                    <div className="relative">
-                      <Input 
-                        type={showPassword ? "text" : "password"} 
-                        placeholder="Enter your password" 
-                        autoComplete="current-password"
-                        {...field} 
-                      />
-                      <Button 
-                        type="button"
-                        variant="ghost" 
-                        size="icon" 
-                        className="absolute right-0 top-0 h-full px-3"
-                        onClick={togglePasswordVisibility}
-                      >
-                        {showPassword ? 
-                          <EyeOff className="h-4 w-4 text-muted-foreground" /> : 
-                          <Eye className="h-4 w-4 text-muted-foreground" />
-                        }
-                        <span className="sr-only">
-                          {showPassword ? "Hide password" : "Show password"}
-                        </span>
-                      </Button>
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
             <Button type="submit" className="w-full mt-6" disabled={isSubmitting}>
-              {isSubmitting ? "Logging in..." : "Log in"}
+              {isSubmitting ? "Sending code..." : "Send verification code"}
             </Button>
           </form>
         </Form>

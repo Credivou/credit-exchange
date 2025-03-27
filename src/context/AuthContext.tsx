@@ -8,11 +8,10 @@ type AuthContextType = {
   isLoggedIn: boolean;
   user: User | null;
   session: Session | null;
-  login: (email: string, password: string) => Promise<void>;
+  loginWithOTP: (email: string) => Promise<void>;
   signUp: (userData: {
     name: string;
     email: string;
-    password: string;
     phone: string;
     country: string;
     city: string;
@@ -57,15 +56,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signUp = async (userData: {
     name: string;
     email: string;
-    password: string;
     phone: string;
     country: string;
     city: string;
   }): Promise<void> => {
     try {
+      // Generate a random password since Supabase still requires one
+      // This password won't be needed by the user since they'll login via OTP
+      const randomPassword = Math.random().toString(36).slice(-10) + Math.random().toString(36).slice(-10);
+      
       const { data, error } = await supabase.auth.signUp({
         email: userData.email,
-        password: userData.password,
+        password: randomPassword,
         options: {
           data: {
             name: userData.name,
@@ -80,7 +82,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (error) throw error;
       
       console.log("Sign up successful:", data);
-      toast.success("Sign up successful! Please check your email for the verification code.");
+      toast.success("Sign up successful! You can now login with an OTP sent to your email.");
     } catch (error: any) {
       console.error("Error signing up:", error.message);
       toast.error(error.message || "Failed to sign up. Please try again.");
@@ -88,20 +90,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const login = async (email: string, password: string): Promise<void> => {
+  const loginWithOTP = async (email: string): Promise<void> => {
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { error } = await supabase.auth.signInWithOtp({
         email,
-        password,
+        options: {
+          emailRedirectTo: getCurrentUrl(),
+        }
       });
 
       if (error) throw error;
       
-      console.log("Login successful");
-      toast.success("Login successful! Welcome back.");
+      console.log("OTP sent successfully");
+      toast.success("Verification code sent to your email. Please check your inbox.");
     } catch (error: any) {
-      console.error("Error logging in:", error.message);
-      toast.error(error.message || "Failed to log in. Please check your credentials.");
+      console.error("Error sending OTP:", error.message);
+      toast.error(error.message || "Failed to send verification code. Please try again.");
       throw error;
     }
   };
@@ -135,7 +139,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, user, session, login, signUp, loginWithGoogle, logout }}>
+    <AuthContext.Provider value={{ isLoggedIn, user, session, loginWithOTP, signUp, loginWithGoogle, logout }}>
       {children}
     </AuthContext.Provider>
   );

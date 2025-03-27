@@ -1,12 +1,24 @@
 
 import { motion } from 'framer-motion';
+import { useState } from 'react';
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import FeaturedListings from "@/components/FeaturedListings";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
+import SignUpSheet from "@/components/auth/SignUpSheet";
+import LoginSheet from "@/components/auth/LoginSheet";
+import { useAuth } from "@/context/AuthContext";
 
 const Index = () => {
+  const [isSignUpOpen, setIsSignUpOpen] = useState(false);
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const { isLoggedIn } = useAuth();
+
+  const handleLoginSuccess = () => {
+    console.log("Login successful");
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -34,18 +46,48 @@ const Index = () => {
               Join our marketplace today and start earning from your unused credit card invitations
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <Button size="lg" className="bg-white text-medium-blue hover:bg-white/90 rounded-full">
-                Sign Up Now
-              </Button>
-              <Button size="lg" variant="outline" className="text-white border-white hover:bg-white/10 rounded-full">
-                Learn More
-              </Button>
+              {isLoggedIn ? (
+                <Button size="lg" className="bg-white text-medium-blue hover:bg-white/90 rounded-full">
+                  Browse Listings
+                </Button>
+              ) : (
+                <>
+                  <Button 
+                    size="lg" 
+                    className="bg-white text-medium-blue hover:bg-white/90 rounded-full"
+                    onClick={() => setIsSignUpOpen(true)}
+                  >
+                    Sign Up Now
+                  </Button>
+                  <Button 
+                    size="lg" 
+                    variant="outline" 
+                    className="text-white border-white hover:bg-white/10 rounded-full"
+                    onClick={() => setIsLoginOpen(true)}
+                  >
+                    Log In
+                  </Button>
+                </>
+              )}
             </div>
           </div>
         </div>
       </section>
       
       <Footer />
+      
+      {/* Auth Modals */}
+      <SignUpSheet 
+        open={isSignUpOpen} 
+        onOpenChange={setIsSignUpOpen}
+        onSuccess={() => setIsLoginOpen(true)}
+      />
+      
+      <LoginSheet 
+        open={isLoginOpen} 
+        onOpenChange={setIsLoginOpen}
+        onLoginSuccess={handleLoginSuccess}
+      />
     </motion.div>
   );
 };

@@ -13,12 +13,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { countriesData } from "@/utils/countriesData";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { Eye, EyeOff } from "lucide-react";
 
 const signUpSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   email: z.string().email("Please enter a valid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
   countryCode: z.string().min(1, "Country code is required"),
   phone: z.string().min(4, "Please enter a valid phone number"),
   country: z.string().min(2, "Country must be at least 2 characters"),
@@ -36,7 +34,6 @@ interface SignUpSheetProps {
 const SignUpSheet = ({ open, onOpenChange, onSuccess }: SignUpSheetProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [availableCities, setAvailableCities] = useState<string[]>([]);
-  const [showPassword, setShowPassword] = useState(false);
   const { signUp, loginWithGoogle } = useAuth();
 
   const form = useForm<SignUpValues>({
@@ -44,7 +41,6 @@ const SignUpSheet = ({ open, onOpenChange, onSuccess }: SignUpSheetProps) => {
     defaultValues: {
       name: "",
       email: "",
-      password: "",
       countryCode: "+1",
       phone: "",
       country: "",
@@ -82,13 +78,12 @@ const SignUpSheet = ({ open, onOpenChange, onSuccess }: SignUpSheetProps) => {
       await signUp({
         name: data.name,
         email: data.email,
-        password: data.password,
         phone: fullPhone,
         country: data.country,
         city: data.city
       });
       
-      toast.success("Account created successfully! Check your email for a verification code.");
+      toast.success("Account created successfully! You can now log in with a verification code.");
       form.reset();
       onOpenChange(false);
       onSuccess();
@@ -112,10 +107,6 @@ const SignUpSheet = ({ open, onOpenChange, onSuccess }: SignUpSheetProps) => {
     } catch (error) {
       // Error is handled in the loginWithGoogle function
     }
-  };
-
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
   };
 
   // Function to get flag emoji for a country
@@ -203,41 +194,6 @@ const SignUpSheet = ({ open, onOpenChange, onSuccess }: SignUpSheetProps) => {
                   <FormLabel>Email Address</FormLabel>
                   <FormControl>
                     <Input type="email" placeholder="your.email@example.com" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Password</FormLabel>
-                  <FormControl>
-                    <div className="relative">
-                      <Input 
-                        type={showPassword ? "text" : "password"} 
-                        placeholder="Create a password (min 6 characters)" 
-                        {...field} 
-                      />
-                      <Button 
-                        type="button"
-                        variant="ghost" 
-                        size="icon" 
-                        className="absolute right-0 top-0 h-full px-3"
-                        onClick={togglePasswordVisibility}
-                      >
-                        {showPassword ? 
-                          <EyeOff className="h-4 w-4 text-muted-foreground" /> : 
-                          <Eye className="h-4 w-4 text-muted-foreground" />
-                        }
-                        <span className="sr-only">
-                          {showPassword ? "Hide password" : "Show password"}
-                        </span>
-                      </Button>
-                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
