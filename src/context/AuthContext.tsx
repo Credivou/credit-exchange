@@ -8,10 +8,11 @@ type AuthContextType = {
   isLoggedIn: boolean;
   user: User | null;
   session: Session | null;
-  login: (email: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<void>;
   signUp: (userData: {
     name: string;
     email: string;
+    password: string;
     phone: string;
     country: string;
     city: string;
@@ -56,17 +57,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signUp = async (userData: {
     name: string;
     email: string;
+    password: string;
     phone: string;
     country: string;
     city: string;
   }): Promise<void> => {
     try {
-      // Generate a random password (this will not be used as we'll use magic links for login)
-      const password = Math.random().toString(36).slice(-12);
-      
       const { data, error } = await supabase.auth.signUp({
         email: userData.email,
-        password,
+        password: userData.password,
         options: {
           data: {
             name: userData.name,
@@ -81,7 +80,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (error) throw error;
       
       console.log("Sign up successful:", data);
-      toast.success("Sign up successful! Please check your email for the verification link.");
+      toast.success("Sign up successful! Please check your email for the verification code.");
     } catch (error: any) {
       console.error("Error signing up:", error.message);
       toast.error(error.message || "Failed to sign up. Please try again.");
@@ -89,23 +88,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const login = async (email: string): Promise<void> => {
+  const login = async (email: string, password: string): Promise<void> => {
     try {
-      const { error } = await supabase.auth.signInWithOtp({
+      const { error } = await supabase.auth.signInWithPassword({
         email,
-        options: {
-          shouldCreateUser: false,
-          emailRedirectTo: getCurrentUrl(),
-        }
+        password,
       });
 
       if (error) throw error;
       
-      console.log("Magic link sent successfully");
-      toast.success("Magic link sent to your email. Please check your inbox.");
+      console.log("Login successful");
+      toast.success("Login successful! Welcome back.");
     } catch (error: any) {
-      console.error("Error sending magic link:", error.message);
-      toast.error(error.message || "Failed to send login link. Please try again.");
+      console.error("Error logging in:", error.message);
+      toast.error(error.message || "Failed to log in. Please check your credentials.");
       throw error;
     }
   };

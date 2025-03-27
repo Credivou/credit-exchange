@@ -3,7 +3,6 @@ import { motion } from 'framer-motion';
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import FeaturedListings from "@/components/FeaturedListings";
-import HowItWorks from "@/components/HowItWorks";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 
@@ -18,7 +17,6 @@ const Index = () => {
       <Navbar />
       <Hero />
       <FeaturedListings />
-      <HowItWorks />
       
       {/* Call to Action Section */}
       <section className="py-24 bg-medium-blue relative overflow-hidden">
