@@ -14,6 +14,7 @@ interface Listing {
   title: string;
   issuer: string;
   price: number;
+  currency: string;
   benefits: string[];
   image: string;
   featured: boolean;
@@ -46,6 +47,24 @@ const ListingsGrid = ({ listings, isLoaded, handleImageLoad }: ListingsGridProps
   const handleNegotiate = (listing: Listing) => {
     setSelectedListing(listing);
     setNegotiateDialogOpen(true);
+  };
+
+  const getCurrencySymbol = (currency: string) => {
+    const currencySymbols: { [key: string]: string } = {
+      'INR': '₹',
+      'USD': '$',
+      'EUR': '€',
+      'GBP': '£',
+      'JPY': '¥',
+      'AUD': 'A$',
+      'CAD': 'C$',
+      'CHF': 'CHF',
+      'CNY': '¥',
+      'SGD': 'S$',
+      'AED': 'د.إ'
+    };
+    
+    return currencySymbols[currency] || currency;
   };
 
   return (
@@ -93,7 +112,9 @@ const ListingsGrid = ({ listings, isLoaded, handleImageLoad }: ListingsGridProps
               
               <CardFooter className="p-4 pt-0 flex flex-col gap-3 border-t border-gray-100 mt-4">
                 <div className="flex justify-between items-center w-full">
-                  <span className="text-xl font-semibold text-medium-blue">₹{listing.price}</span>
+                  <span className="text-xl font-semibold text-medium-blue">
+                    {getCurrencySymbol(listing.currency || 'INR')}{listing.price}
+                  </span>
                 </div>
                 <div className="flex gap-2 w-full">
                   <Button 

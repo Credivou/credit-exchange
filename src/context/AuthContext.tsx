@@ -48,6 +48,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => subscription.unsubscribe();
   }, []);
 
+  const getCurrentUrl = () => {
+    // Get the current origin (protocol + hostname + port)
+    return window.location.origin;
+  };
+
   const signUp = async (userData: {
     name: string;
     email: string;
@@ -69,15 +74,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             country: userData.country,
             city: userData.city,
           },
-          emailRedirectTo: `${window.location.origin}/`,
+          emailRedirectTo: getCurrentUrl(),
         },
       });
 
       if (error) throw error;
       
       console.log("Sign up successful:", data);
+      toast.success("Sign up successful! Please check your email for the verification link.");
     } catch (error: any) {
       console.error("Error signing up:", error.message);
+      toast.error(error.message || "Failed to sign up. Please try again.");
       throw error;
     }
   };
@@ -88,15 +95,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         email,
         options: {
           shouldCreateUser: false,
-          emailRedirectTo: `${window.location.origin}/`,
+          emailRedirectTo: getCurrentUrl(),
         }
       });
 
       if (error) throw error;
       
       console.log("Login request sent successfully");
+      toast.success("Login link sent to your email. Please check your inbox.");
     } catch (error: any) {
       console.error("Error logging in:", error.message);
+      toast.error(error.message || "Failed to log in. Please try again.");
       throw error;
     }
   };
@@ -106,7 +115,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/`,
+          redirectTo: getCurrentUrl(),
         }
       });
 
@@ -122,6 +131,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
+      toast.success("You have been logged out successfully");
     } catch (error: any) {
       console.error("Error signing out:", error.message);
       toast.error("Failed to sign out. Please try again.");

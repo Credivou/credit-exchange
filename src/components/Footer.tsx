@@ -15,17 +15,11 @@ const Footer = () => {
   }, {
     title: "Platform",
     links: [{
-      name: "How It Works",
-      path: "/about"
-    }, {
       name: "Browse Listings",
       path: "/listings"
     }, {
       name: "Post an Offer",
       path: "/post"
-    }, {
-      name: "Pricing",
-      path: "/pricing"
     }]
   }, {
     title: "Resources",
