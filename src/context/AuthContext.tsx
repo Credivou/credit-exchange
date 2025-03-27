@@ -61,7 +61,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     city: string;
   }): Promise<void> => {
     try {
-      // Generate a random password (this will not be used as we'll use OTP for login)
+      // Generate a random password (this will not be used as we'll use magic links for login)
       const password = Math.random().toString(36).slice(-12);
       
       const { data, error } = await supabase.auth.signUp({
@@ -101,11 +101,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (error) throw error;
       
-      console.log("Login request sent successfully");
-      toast.success("Login link sent to your email. Please check your inbox.");
+      console.log("Magic link sent successfully");
+      toast.success("Magic link sent to your email. Please check your inbox.");
     } catch (error: any) {
-      console.error("Error logging in:", error.message);
-      toast.error(error.message || "Failed to log in. Please try again.");
+      console.error("Error sending magic link:", error.message);
+      toast.error(error.message || "Failed to send login link. Please try again.");
       throw error;
     }
   };

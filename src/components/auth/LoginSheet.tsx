@@ -8,21 +8,17 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Separator } from "@/components/ui/separator";
+import { AlertCircle } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 const emailSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
 });
 
-const otpSchema = z.object({
-  otp: z.string().min(6, "OTP must be 6 digits"),
-});
-
 type EmailFormValues = z.infer<typeof emailSchema>;
-type OTPFormValues = z.infer<typeof otpSchema>;
 
 interface LoginSheetProps {
   open: boolean;
@@ -31,9 +27,8 @@ interface LoginSheetProps {
 }
 
 const LoginSheet = ({ open, onOpenChange, onLoginSuccess }: LoginSheetProps) => {
-  const [step, setStep] = useState<"email" | "otp">("email");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [userEmail, setUserEmail] = useState("");
+  const [emailSent, setEmailSent] = useState(false);
   const { login, loginWithGoogle } = useAuth();
 
   const emailForm = useForm<EmailFormValues>({
@@ -43,28 +38,13 @@ const LoginSheet = ({ open, onOpenChange, onLoginSuccess }: LoginSheetProps) => 
     },
   });
 
-  const otpForm = useForm<OTPFormValues>({
-    resolver: zodResolver(otpSchema),
-    defaultValues: {
-      otp: "",
-    },
-  });
-
-  // Reset forms when sheet opens/closes
+  // Reset form when sheet opens/closes
   useEffect(() => {
     if (open) {
       emailForm.reset({ email: "" });
-      otpForm.reset({ otp: "" });
-      setStep("email");
+      setEmailSent(false);
     }
-  }, [open, emailForm, otpForm]);
-
-  // Reset OTP form when switching to OTP step
-  useEffect(() => {
-    if (step === "otp") {
-      otpForm.reset({ otp: "" });
-    }
-  }, [step, otpForm]);
+  }, [open, emailForm]);
 
   const handleEmailSubmit = async (data: EmailFormValues) => {
     setIsSubmitting(true);
@@ -73,65 +53,21 @@ const LoginSheet = ({ open, onOpenChange, onLoginSuccess }: LoginSheetProps) => 
       // Send magic link via Supabase
       await login(data.email);
       
-      setUserEmail(data.email);
-      setStep("otp");
-      toast.success("OTP sent to your email. Please check your inbox and spam folders.");
+      setEmailSent(true);
+      toast.success("Magic link sent to your email. Please check your inbox and spam folders.");
     } catch (error: any) {
-      console.error("Error sending OTP:", error);
+      console.error("Error sending login link:", error);
       
       if (error.message?.includes("Email not confirmed")) {
         toast.error("Email not confirmed. Please check your inbox for the verification link or sign up again.");
       } else if (error.message?.includes("User not found")) {
         toast.error("No account found with this email. Please sign up first.");
       } else {
-        toast.error("Failed to send OTP. Please try again.");
+        toast.error("Failed to send login link. Please try again.");
       }
     } finally {
       setIsSubmitting(false);
     }
-  };
-
-  const handleOTPSubmit = async (data: OTPFormValues) => {
-    setIsSubmitting(true);
-    
-    try {
-      // Verify the OTP 
-      const { error } = await supabase.auth.verifyOtp({
-        email: userEmail,
-        token: data.otp,
-        type: 'email'
-      });
-      
-      if (error) throw error;
-      
-      toast.success("Login successful!");
-      onOpenChange(false);
-      onLoginSuccess();
-      
-      emailForm.reset();
-      otpForm.reset();
-      setStep("email");
-    } catch (error: any) {
-      console.error("Error verifying OTP:", error);
-      toast.error("Invalid OTP. Please check and try again.");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleResendOTP = async () => {
-    try {
-      await login(userEmail);
-      toast.success("New OTP sent to your email. Please check your inbox.");
-    } catch (error: any) {
-      console.error("Error resending OTP:", error);
-      toast.error("Failed to resend OTP. Please try again.");
-    }
-  };
-
-  const handleBack = () => {
-    setStep("email");
-    otpForm.reset({ otp: "" });
   };
 
   const handleGoogleLogin = async () => {
@@ -149,13 +85,32 @@ const LoginSheet = ({ open, onOpenChange, onLoginSuccess }: LoginSheetProps) => 
         <SheetHeader className="pb-4">
           <SheetTitle>Log in to your account</SheetTitle>
           <SheetDescription>
-            {step === "email" 
-              ? "Enter your email to receive a one-time password or use Google" 
-              : `Enter the 6-digit code sent to ${userEmail}`}
+            {emailSent 
+              ? "Check your email for the magic link" 
+              : "Enter your email to receive a login link or use Google"}
           </SheetDescription>
         </SheetHeader>
         
-        {step === "email" ? (
+        {emailSent ? (
+          <div className="mt-6 space-y-4">
+            <Alert>
+              <AlertCircle className="h-4 w-4" />
+              <AlertTitle>Check your email</AlertTitle>
+              <AlertDescription>
+                We've sent a magic link to your email. Click on it to log in automatically.
+                If you don't see it, check your spam folder.
+              </AlertDescription>
+            </Alert>
+            
+            <Button 
+              onClick={() => setEmailSent(false)} 
+              variant="outline" 
+              className="w-full mt-4"
+            >
+              Back to login
+            </Button>
+          </div>
+        ) : (
           <>
             <Form {...emailForm}>
               <form onSubmit={emailForm.handleSubmit(handleEmailSubmit)} className="space-y-4 pt-4">
@@ -179,7 +134,7 @@ const LoginSheet = ({ open, onOpenChange, onLoginSuccess }: LoginSheetProps) => 
                 />
                 
                 <Button type="submit" className="w-full mt-6" disabled={isSubmitting}>
-                  {isSubmitting ? "Sending..." : "Send OTP"}
+                  {isSubmitting ? "Sending..." : "Send Magic Link"}
                 </Button>
               </form>
             </Form>
@@ -206,62 +161,6 @@ const LoginSheet = ({ open, onOpenChange, onLoginSuccess }: LoginSheetProps) => 
               </Button>
             </div>
           </>
-        ) : (
-          <Form {...otpForm}>
-            <form onSubmit={otpForm.handleSubmit(handleOTPSubmit)} className="space-y-4 pt-4">
-              <FormField
-                control={otpForm.control}
-                name="otp"
-                render={({ field }) => (
-                  <FormItem className="mx-auto text-center">
-                    <FormLabel>Verification Code</FormLabel>
-                    <FormControl>
-                      <InputOTP maxLength={6} value={field.value} onChange={field.onChange}>
-                        <InputOTPGroup>
-                          <InputOTPSlot index={0} />
-                          <InputOTPSlot index={1} />
-                          <InputOTPSlot index={2} />
-                          <InputOTPSlot index={3} />
-                          <InputOTPSlot index={4} />
-                          <InputOTPSlot index={5} />
-                        </InputOTPGroup>
-                      </InputOTP>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <div className="text-center mt-2">
-                <Button 
-                  type="button" 
-                  variant="link" 
-                  className="text-sm"
-                  onClick={handleResendOTP}
-                >
-                  Didn't receive the code? Resend
-                </Button>
-              </div>
-              
-              <div className="flex flex-col sm:flex-row gap-3 mt-6">
-                <Button 
-                  type="button" 
-                  variant="outline" 
-                  className="sm:flex-1"
-                  onClick={handleBack}
-                >
-                  Back
-                </Button>
-                <Button 
-                  type="submit" 
-                  className="sm:flex-1"
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting ? "Verifying..." : "Verify & Login"}
-                </Button>
-              </div>
-            </form>
-          </Form>
         )}
       </SheetContent>
     </Sheet>
