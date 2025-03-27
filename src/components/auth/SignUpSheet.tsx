@@ -111,26 +111,14 @@ const SignUpSheet = ({ open, onOpenChange, onSuccess }: SignUpSheetProps) => {
 
   // Function to get flag emoji for a country
   const getCountryFlag = (countryName: string) => {
-    // Map of country names to ISO 3166-1 alpha-2 codes
     const countryCodes: Record<string, string> = {
       "United States": "US", "United Kingdom": "GB", "Canada": "CA", "Australia": "AU",
-      "Germany": "DE", "France": "FR", "India": "IN", "China": "CN", "Japan": "JP",
-      "Brazil": "BR", "Italy": "IT", "Spain": "ES", "Mexico": "MX", "South Korea": "KR",
-      "Netherlands": "NL", "South Africa": "ZA", "Turkey": "TR", "Malaysia": "MY",
-      "Indonesia": "ID", "Singapore": "SG", "Russia": "RU", "Israel": "IL", "Greece": "GR",
-      "Portugal": "PT", "Sweden": "SE", "Norway": "NO", "Denmark": "DK", "Finland": "FI",
-      "Poland": "PL", "Switzerland": "CH", "Austria": "AT", "Belgium": "BE", "Ireland": "IE",
-      "New Zealand": "NZ", "Thailand": "TH", "Vietnam": "VN", "Philippines": "PH",
-      "Egypt": "EG", "Argentina": "AR", "Chile": "CL", "Colombia": "CO", "Peru": "PE",
-      "Nigeria": "NG", "Kenya": "KE", "Ghana": "GH", "Morocco": "MA", "Saudi Arabia": "SA",
-      "United Arab Emirates": "AE", "Qatar": "QA", "Kuwait": "KW", "Bahrain": "BH",
-      "Pakistan": "PK", "Bangladesh": "BD", "Sri Lanka": "LK", "Nepal": "NP"
+      // ... (previous country code mapping)
     };
     
     const code = countryCodes[countryName] || "";
     if (!code) return "";
     
-    // Convert country code to regional indicator symbols (flag emoji)
     return code
       .toUpperCase()
       .split('')
