@@ -75,7 +75,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             country: userData.country,
             city: userData.city,
           },
-          emailRedirectTo: getCurrentUrl(),
+          emailRedirectTo: `${getCurrentUrl()}/auth/callback`,
         },
       });
 
@@ -95,7 +95,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const { error } = await supabase.auth.signInWithOtp({
         email,
         options: {
-          emailRedirectTo: getCurrentUrl(),
+          emailRedirectTo: `${getCurrentUrl()}/auth/callback`,
         }
       });
 
@@ -115,7 +115,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: getCurrentUrl(),
+          redirectTo: `${getCurrentUrl()}/auth/callback`,
         }
       });
 

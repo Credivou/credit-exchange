@@ -12,6 +12,7 @@ import About from "./pages/About";
 import Listings from "./pages/Listings";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
+import AuthCallback from "./pages/AuthCallback";
 
 // Create a client
 const queryClient = new QueryClient();
@@ -30,6 +31,7 @@ const App: React.FC = () => {
                 <Route path="/about" element={<About />} />
                 <Route path="/listings" element={<Listings />} />
                 <Route path="/contact" element={<Contact />} />
+                <Route path="/auth/callback" element={<AuthCallback />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </AnimatePresence>
