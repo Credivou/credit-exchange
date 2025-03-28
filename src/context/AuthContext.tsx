@@ -61,6 +61,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     city: string;
   }): Promise<void> => {
     try {
+      // First check if user already exists
+      const { data: existingUsers, error: lookupError } = await supabase
+        .from('profiles')
+        .select('email')
+        .eq('email', userData.email)
+        .limit(1);
+        
+      if (lookupError) throw lookupError;
+      
+      if (existingUsers && existingUsers.length > 0) {
+        throw new Error("An account with this email already exists. Please log in instead.");
+      }
+      
       // Generate a random password since Supabase still requires one
       // This password won't be needed by the user since they'll login via OTP
       const randomPassword = Math.random().toString(36).slice(-10) + Math.random().toString(36).slice(-10);
@@ -92,6 +105,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const loginWithOTP = async (email: string): Promise<void> => {
     try {
+      // First check if the user exists
+      const { data: existingUsers, error: lookupError } = await supabase
+        .from('profiles')
+        .select('email')
+        .eq('email', email)
+        .limit(1);
+        
+      if (lookupError) throw lookupError;
+      
+      if (!existingUsers || existingUsers.length === 0) {
+        throw new Error("No account exists with this email. Please sign up first.");
+      }
+      
+      // If user exists, send OTP
       const { error } = await supabase.auth.signInWithOtp({
         email,
         options: {

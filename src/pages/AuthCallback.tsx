@@ -8,13 +8,17 @@ const AuthCallback = () => {
 
   useEffect(() => {
     // Process the OAuth or OTP callback
-    const { data, error } = supabase.auth.getSession();
-    
-    // Log for debugging
-    console.log("Auth callback processing:", { data, error });
-    
-    // Redirect to home page after processing
-    navigate("/");
+    const processAuthCallback = async () => {
+      const { data, error } = await supabase.auth.getSession();
+      
+      // Log for debugging
+      console.log("Auth callback processing:", { data, error });
+      
+      // Redirect to home page after processing
+      navigate("/");
+    };
+
+    processAuthCallback();
   }, [navigate]);
 
   return (

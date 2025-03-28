@@ -66,6 +66,8 @@ const LoginSheet = ({ open, onOpenChange, onLoginSuccess }: LoginSheetProps) => 
       
       if (error.message?.includes("Email not confirmed")) {
         setLoginError("Your email is not confirmed. Please check your inbox for the verification link.");
+      } else if (error.message?.includes("User not found")) {
+        setLoginError("No account exists with this email. Please sign up first.");
       } else {
         setLoginError(error.message || "Failed to send OTP. Please try again.");
       }
