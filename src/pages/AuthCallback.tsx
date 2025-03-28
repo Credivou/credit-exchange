@@ -2,6 +2,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const AuthCallback = () => {
   const navigate = useNavigate();
@@ -9,13 +10,25 @@ const AuthCallback = () => {
   useEffect(() => {
     // Process the OAuth or OTP callback
     const processAuthCallback = async () => {
-      const { data, error } = await supabase.auth.getSession();
-      
-      // Log for debugging
-      console.log("Auth callback processing:", { data, error });
-      
-      // Redirect to home page after processing
-      navigate("/");
+      try {
+        const { data, error } = await supabase.auth.getSession();
+        
+        // Log for debugging
+        console.log("Auth callback processing:", { data, error });
+        
+        if (error) {
+          toast.error("Authentication failed: " + error.message);
+        } else if (data?.session) {
+          toast.success("Successfully logged in!");
+        }
+        
+        // Redirect to home page after processing
+        navigate("/");
+      } catch (err) {
+        console.error("Error in auth callback:", err);
+        toast.error("Something went wrong during authentication");
+        navigate("/");
+      }
     };
 
     processAuthCallback();

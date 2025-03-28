@@ -94,6 +94,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (error) throw error;
       
+      // Manually create a profile if the automatic trigger doesn't work
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .insert({
+          id: data.user?.id,
+          email: userData.email,
+          name: userData.name,
+          phone: userData.phone,
+          country: userData.country,
+          city: userData.city
+        });
+        
+      if (profileError) {
+        console.error("Error creating profile manually:", profileError);
+        // Don't throw here, as the auth signup already succeeded
+      }
+      
       console.log("Sign up successful:", data);
       toast.success("Sign up successful! You can now login with an OTP sent to your email.");
     } catch (error: any) {
@@ -105,16 +122,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const loginWithOTP = async (email: string): Promise<void> => {
     try {
-      // First check if the user exists
+      // First check if the user exists in auth users using email
+      const { data: authUser, error: authError } = await supabase.auth.admin.listUsers({
+        filter: {
+          email: email
+        }
+      });
+      
+      console.log("Auth check for email:", email, authUser);
+      
+      // Then check profiles as backup
       const { data: existingUsers, error: lookupError } = await supabase
         .from('profiles')
         .select('email')
         .eq('email', email)
         .limit(1);
-        
-      if (lookupError) throw lookupError;
       
-      if (!existingUsers || existingUsers.length === 0) {
+      console.log("Profile check for email:", email, existingUsers);
+        
+      if (lookupError && !authUser) throw lookupError;
+      
+      if ((!authUser || authUser.users.length === 0) && (!existingUsers || existingUsers.length === 0)) {
         throw new Error("No account exists with this email. Please sign up first.");
       }
       
