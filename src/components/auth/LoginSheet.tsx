@@ -9,7 +9,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "@/context/AuthContext";
 import { Separator } from "@/components/ui/separator";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, Info } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 const loginSchema = z.object({
@@ -103,6 +103,7 @@ const LoginSheet = ({ open, onOpenChange, onLoginSuccess }: LoginSheetProps) => 
         
         {otpSent && (
           <Alert className="mt-4">
+            <Info className="h-4 w-4" />
             <AlertTitle>Verification Code Sent</AlertTitle>
             <AlertDescription>
               We've sent a verification code to your email. Please check your inbox and click the link to continue.

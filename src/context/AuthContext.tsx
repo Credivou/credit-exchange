@@ -122,27 +122,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const loginWithOTP = async (email: string): Promise<void> => {
     try {
-      // First check if the user exists in auth users using email
-      const { data: authUser, error: authError } = await supabase.auth.admin.listUsers({
-        filter: {
-          email: email
-        }
-      });
-      
-      console.log("Auth check for email:", email, authUser);
-      
-      // Then check profiles as backup
+      // Check if the user exists in the profiles table
       const { data: existingUsers, error: lookupError } = await supabase
         .from('profiles')
         .select('email')
         .eq('email', email)
         .limit(1);
       
+      if (lookupError) {
+        console.error("Error checking existing user:", lookupError);
+      }
+      
+      // Check directly in auth users with an admin function (safer approach)
+      // We'll use a different approach because the filter property is causing issues
+      const { data: authUsersList, error: authError } = await supabase.auth.admin.listUsers();
+      
+      const authUsers = authUsersList?.users?.filter(u => u.email === email) || [];
+      
+      console.log("Auth check for email:", email, authUsers);
       console.log("Profile check for email:", email, existingUsers);
         
-      if (lookupError && !authUser) throw lookupError;
-      
-      if ((!authUser || authUser.users.length === 0) && (!existingUsers || existingUsers.length === 0)) {
+      if ((!authUsers || authUsers.length === 0) && (!existingUsers || existingUsers.length === 0)) {
         throw new Error("No account exists with this email. Please sign up first.");
       }
       
