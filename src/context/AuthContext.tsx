@@ -134,10 +134,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
       
       // Check directly in auth users with an admin function (safer approach)
-      // We'll use a different approach because the filter property is causing issues
+      // The filter property was causing type issues, so we'll fetch all users and filter them manually
       const { data: authUsersList, error: authError } = await supabase.auth.admin.listUsers();
       
-      const authUsers = authUsersList?.users?.filter(u => u.email === email) || [];
+      if (authError) {
+        console.error("Error checking auth users:", authError);
+      }
+      
+      // Safely typecast and filter the users array
+      const authUsers = authUsersList?.users 
+        ? authUsersList.users.filter(u => u.email === email) 
+        : [];
       
       console.log("Auth check for email:", email, authUsers);
       console.log("Profile check for email:", email, existingUsers);
