@@ -142,9 +142,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
       
       // Safely typecast and filter the users array
-      const authUsers = authUsersList?.users 
-        ? authUsersList.users.filter(u => u.email === email) 
-        : [];
+      const authUsers = [];
+      if (authUsersList?.users && Array.isArray(authUsersList.users)) {
+        authUsersList.users.forEach(user => {
+          if (user && typeof user === 'object' && 'email' in user && user.email === email) {
+            authUsers.push(user);
+          }
+        });
+      }
       
       console.log("Auth check for email:", email, authUsers);
       console.log("Profile check for email:", email, existingUsers);
