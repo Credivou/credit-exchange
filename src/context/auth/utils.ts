@@ -1,5 +1,6 @@
 
 import { supabase } from "@/integrations/supabase/client";
+import { User } from "@supabase/supabase-js";
 
 export const getCurrentUrl = (): string => {
   // Get the current origin (protocol + hostname + port)
@@ -33,7 +34,7 @@ export const checkUserExists = async (email: string): Promise<boolean> => {
     
     // Properly type-check and filter the users array
     if (data?.users && Array.isArray(data.users)) {
-      hasMatchingUser = data.users.some(user => {
+      hasMatchingUser = data.users.some((user: any) => {
         // Safely check if user has an email property and if it matches
         return (
           user && 
