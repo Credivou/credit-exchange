@@ -10,6 +10,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
 const formSchema = z.object({
   name: z.string().min(2, {
     message: "Name must be at least 2 characters."
@@ -24,7 +25,9 @@ const formSchema = z.object({
     message: "Message must be at least 10 characters."
   })
 });
+
 type FormValues = z.infer<typeof formSchema>;
+
 const Contact = () => {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -35,6 +38,7 @@ const Contact = () => {
       message: ""
     }
   });
+
   const onSubmit = (data: FormValues) => {
     console.log("Form submitted:", data);
 
@@ -42,6 +46,7 @@ const Contact = () => {
     toast.success("Message sent successfully! We'll get back to you soon.");
     form.reset();
   };
+
   return <motion.div initial={{
     opacity: 0
   }} animate={{
@@ -197,8 +202,6 @@ const Contact = () => {
                       <div>
                         <h3 className="text-lg font-semibold mb-1">Address</h3>
                         <p className="text-gray-600">New Delhi, India</p>
-                        <p className="text-gray-600">
-                      </p>
                       </div>
                     </div>
                   </div>
@@ -239,25 +242,8 @@ const Contact = () => {
         </div>
       </section>
       
-      {/* Map Section */}
-      <section className="py-12 bg-off-white">
-        <div className="container mx-auto px-4 md:px-6">
-          <div className="bg-white p-4 rounded-xl shadow-sm overflow-hidden border border-gray-100">
-            <div className="h-[400px] bg-gray-100 rounded-lg flex items-center justify-center">
-              <div className="text-center">
-                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mx-auto text-gray-400 mb-4">
-                  <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path>
-                  <circle cx="12" cy="10" r="3"></circle>
-                </svg>
-                <p className="text-gray-500 mb-2">Map placeholder</p>
-                <p className="text-gray-600 font-medium">123 Financial Avenue, New York, NY 10001</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-      
       <Footer />
     </motion.div>;
 };
+
 export default Contact;
